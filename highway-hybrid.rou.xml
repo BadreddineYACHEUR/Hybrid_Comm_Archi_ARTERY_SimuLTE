@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on lun. 15 mars 2021 16:10:43 by Eclipse SUMO netedit Version 1.8.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/highway-hybrid.net.xml"/>
+    </input>
+
+    <output>
+        <output-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/highway-hybrid.net.xml"/>
+    </output>
+
+    <processing>
+        <geometry.min-radius.fix.railways value="false"/>
+        <geometry.max-grade.fix value="false"/>
+        <offset.disable-normalization value="true"/>
+        <lefthand value="false"/>
+    </processing>
+
+    <junctions>
+        <no-internal-links value="true"/>
+        <no-turnarounds value="true"/>
+        <junctions.corner-detail value="5"/>
+        <junctions.limit-turn-speed value="5.5"/>
+        <rectangular-lane-cut value="false"/>
+    </junctions>
+
+    <pedestrian>
+        <walkingareas value="false"/>
+    </pedestrian>
+
+    <netedit>
+        <route-files value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/highway-hybrid.rou.xml"/>
+    </netedit>
+
+    <report>
+        <aggregate-warnings value="5"/>
+    </report>
+
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <flow id="flow_0" begin="0.00" end="3600.00" number="1800">
+        <route edges="edge1" color="cyan"/>
+    </flow>
+    <flow id="flow_1" begin="0.00" color="blue" end="3600.00" number="1800">
+        <route edges="-edge1" color="cyan"/>
+    </flow>
+    <flow id="flow_2" begin="0.00" color="red" number="5" vehsPerHour="480.00">
+        <route edges="-edge1" color="cyan"/>
+    </flow>
+</routes>

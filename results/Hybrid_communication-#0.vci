@@ -1,0 +1,214 @@
+file 15469 1615932107                                           
+version 2
+run Hybrid_communication-0-20210316-11:37:30-6288
+attr configname Hybrid_communication
+attr datetime 20210316-11:37:30
+attr experiment Hybrid_communication
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsf ""
+attr measurement ""
+attr network artery.lte.World
+attr processid 6288
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+param *.eNodeB[*].nicType "\"LteNicEnbD2D\""
+param *.node[*].nicType "\"LteNicUeD2D\""
+param **.amcMode "\"D2D\""
+param **.d2dCqi 7
+param **.usePreconfiguredTxParams true
+param *.server.numUdpApss 0
+param *.node[*].numUdpApps 1
+param *.node[*].udpApp[0].typename "\"LteApp\""
+param *.node[*].udpApp[0].middlewareModule "\"^.middleware\""
+param *.node[*].udpApp[0].mcastAddress "\"224.0.0.23\""
+param *.node[*].configurator.mcastGroups "\"224.0.0.23\""
+param *.traci.core.version -1
+param *.traci.launcher.typename "\"PosixLauncher\""
+param *.traci.launcher.sumocfg "\"highway-hybrid.sumocfg\""
+param *.channelControl.pMax 10W
+param *.channelControl.alpha 1.0
+param *.channelControl.carrierFrequency "2.1 GHz"
+param *.configurator.config "xmldoc(\"lte_network.xml\")"
+param *.numLteBaseStations 1
+param *.eNodeB[*].lteNic.phy.feedbackComputation "xmldoc(\"lte_channel.xml\")"
+param *.eNodeB[*].lteNic.phy.channelModel "xmldoc(\"lte_channel.xml\")"
+param *.eNodeB[*].lteNic.phy.dynamicCellAssociation true
+param *.eNodeB[*].lteNic.phy.enableHandover true
+param *.eNodeB[*].cellInfo.broadcastMessageInterval "0.5 s"
+param *.eNodeB[*].sctp.nagleEnabled false
+param *.eNodeB[*].sctp.enableHeartbeats false
+param *.eNodeB[0].mobility.initialX 1700m
+param *.eNodeB[0].mobility.initialY 200m
+param *.node[*].lteNic.dlFbGen.feedbackComputation "xmldoc(\"lte_channel.xml\")"
+param *.node[*].lteNic.phy.channelModel "xmldoc(\"lte_channel.xml\")"
+param *.node[*].lteNic.phy.dynamicCellAssociation true
+param *.node[*].lteNic.phy.enableHandover true
+param *.node[*].masterId 1
+param *.node[*].macCellId 1
+param *.node[*].wlan[*].typename "\"VanetNic\""
+param *.node[*].wlan[*].radio.channelNumber 180
+param *.node[*].wlan[*].radio.carrierFrequency "5.9 GHz"
+param *.node[*].wlan[*].radio.transmitter.power "200 mW"
+param *.node[*].middleware.updateInterval "0.1 s"
+param *.node[*].middleware.datetime "\"2018-04-04 15:00:00\""
+param *.node[*].middleware.services "xmldoc(\"services.xml\")"
+
+vector 0 World.eNodeB[0].pppIf.queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr title "queue length, vector"
+vector 1 World.eNodeB[0].pppIf.ppp txState:vector ETV
+attr interpolationmode sample-hold
+attr title "tx state, vector"
+vector 2 World.pgw.ppp[0].queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr title "queue length, vector"
+vector 3 World.pgw.ppp[0].ppp txState:vector ETV
+attr interpolationmode sample-hold
+attr title "tx state, vector"
+vector 4 World.pgw.pppInterface.queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr title "queue length, vector"
+vector 5 World.pgw.pppInterface.ppp txState:vector ETV
+attr interpolationmode sample-hold
+attr title "tx state, vector"
+vector 6 World.server.ppp[0].queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr title "queue length, vector"
+vector 7 World.server.ppp[0].ppp txState:vector ETV
+attr interpolationmode sample-hold
+attr title "tx state, vector"
+vector 8 World.router.ppp[0].queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr title "queue length, vector"
+vector 9 World.router.ppp[0].ppp txState:vector ETV
+attr interpolationmode sample-hold
+attr title "tx state, vector"
+vector 10 World.router.ppp[1].queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr title "queue length, vector"
+vector 11 World.router.ppp[1].ppp txState:vector ETV
+attr interpolationmode sample-hold
+attr title "tx state, vector"
+vector 12 World.eNodeB[0].lteNic.mac avgServedBlocksUl:vector ETV
+attr source avgServedBlocksUl
+attr title "LTE Avg Served Blocks Ul, vector"
+attr unit blocks
+vector 13 World.eNodeB[0].lteNic.mac avgServedBlocksDl:vector ETV
+attr source avgServedBlocksDl
+attr title "LTE Avg Served Blocks Dl, vector"
+attr unit blocks
+0	4165 8 0 0 0 0 1 0 0 0 0
+1	4173 8 0 0 0 0 1 0 0 0 0
+2	4181 8 0 0 0 0 1 0 0 0 0
+3	4189 8 0 0 0 0 1 0 0 0 0
+4	4197 8 0 0 0 0 1 0 0 0 0
+5	4205 8 0 0 0 0 1 0 0 0 0
+6	4213 8 0 0 0 0 1 0 0 0 0
+7	4221 8 0 0 0 0 1 0 0 0 0
+8	4229 8 0 0 0 0 1 0 0 0 0
+9	4237 8 0 0 0 0 1 0 0 0 0
+10	4245 9 0 0 0 0 1 0 0 0 0
+11	4254 9 0 0 0 0 1 0 0 0 0
+12	4263 56 17 23 0.001 0.004 4 0 0 0 0
+13	4319 56 17 23 0.001 0.004 4 0 0 0 0
+vector 14 World.node[0].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr source radioModeChanged
+attr title "Radio mode, vector"
+vector 15 World.node[0].wlan[0].radio radioChannel:vector ETV
+attr interpolationmode sample-hold
+attr source radioChannelChanged
+attr title "Radio channel, vector"
+vector 16 World.node[0].lteNic.phy servingCell:vector ETV
+attr source servingCell
+attr title "ID of the serving eNodeB for the UE, vector"
+attr unit ""
+vector 17 World.node[0].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr source receptionStateChanged
+attr title "Radio reception state, vector"
+vector 18 World.node[0].wlan[0].mac.dcf.channelAccess.contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 19 World.node[0].wlan[0].mac.hcf.edca.edcaf[0].contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 20 World.node[0].wlan[0].mac.hcf.edca.edcaf[1].contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 21 World.node[0].wlan[0].mac.hcf.edca.edcaf[2].contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 22 World.node[0].wlan[0].mac.hcf.edca.edcaf[3].contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 23 World.node[1].wlan[0].radio radioMode:vector ETV
+attr interpolationmode sample-hold
+attr source radioModeChanged
+attr title "Radio mode, vector"
+vector 24 World.node[1].wlan[0].radio radioChannel:vector ETV
+attr interpolationmode sample-hold
+attr source radioChannelChanged
+attr title "Radio channel, vector"
+vector 25 World.node[1].lteNic.phy servingCell:vector ETV
+attr source servingCell
+attr title "ID of the serving eNodeB for the UE, vector"
+attr unit ""
+vector 26 World.node[1].wlan[0].radio receptionState:vector ETV
+attr interpolationmode sample-hold
+attr source receptionStateChanged
+attr title "Radio reception state, vector"
+vector 27 World.node[1].wlan[0].mac.dcf.channelAccess.contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 28 World.node[1].wlan[0].mac.hcf.edca.edcaf[0].contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 29 World.node[1].wlan[0].mac.hcf.edca.edcaf[1].contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 30 World.node[1].wlan[0].mac.hcf.edca.edcaf[2].contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 31 World.node[1].wlan[0].mac.hcf.edca.edcaf[3].contention state:vector ETV
+attr interpolationmode none
+attr source stateChanged
+attr title "contention state, vector"
+vector 32 World.eNodeB[0].lteNic.mac receivedPacketFromLowerLayer:vector(packetBytes) ETV
+attr interpolationmode none
+attr source receivedPacketFromLowerLayer
+12	7558 3417 25 962 0.005 0.236 232 0 0 0 0
+13	10975 3417 25 962 0.005 0.236 232 0 0 0 0
+14	14392 26 216 216 0.1 0.1 2 0 2 2 4
+15	14418 15 216 216 0.1 0.1 1 180 180 180 32400
+16	14433 13 216 216 0.1 0.1 1 1 1 1 1
+17	14446 13 216 216 0.1 0.1 1 1 1 1 1
+18	14459 26 216 216 0.1 0.1 2 0 0 0 0
+19	14485 26 216 216 0.1 0.1 2 0 0 0 0
+20	14511 26 216 216 0.1 0.1 2 0 0 0 0
+21	14537 26 216 216 0.1 0.1 2 0 0 0 0
+22	14563 26 216 216 0.1 0.1 2 0 0 0 0
+23	14589 26 216 216 0.1 0.1 2 0 2 2 4
+24	14615 15 216 216 0.1 0.1 1 180 180 180 32400
+25	14630 13 216 216 0.1 0.1 1 1 1 1 1
+26	14643 13 216 216 0.1 0.1 1 1 1 1 1
+27	14656 26 216 216 0.1 0.1 2 0 0 0 0
+28	14682 26 216 216 0.1 0.1 2 0 0 0 0
+29	14708 26 216 216 0.1 0.1 2 0 0 0 0
+30	14734 26 216 216 0.1 0.1 2 0 0 0 0
+31	14760 26 216 216 0.1 0.1 2 0 0 0 0
+32	14786 682 246 955 0.102 0.234 46 0 0 0 0
+
