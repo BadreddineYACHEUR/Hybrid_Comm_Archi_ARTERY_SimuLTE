@@ -1,5 +1,4 @@
 #include "LteApp.h"
-#include "hybrid_msgs/HybridServicesMessagesLTE_m.h"
 #include "hybrid_msgs/HybridServicesMessages_m.h"
 #include "artery/application/Middleware.h"
 #include "artery/application/StoryboardSignal.h"
@@ -84,6 +83,9 @@ void LteApp::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObject*)
 void LteApp::handleMessage(cMessage* msg)
 {
     /*if (msg->isSelfMessage()) {
+        auto platooningLteMessage = new PlatooningMessage();
+        platooningLteMessage->setEdgeName("dadi");
+        sendV2XMessage(platooningLteMessage);
         //vehicleController->setSpeedFactor(1.0);
     } else */
     if (msg->getKind() == inet::UDP_I_DATA) {
@@ -98,7 +100,7 @@ void LteApp::sendV2XMessage(PlatooningMessage* packet)
 {
     Enter_Method_Silent();
     //maybe add some attributs
-    socket.sendTo(packet, mcastAddress, par("mcastPort"));
+    socket.sendTo(packet->dup(), mcastAddress, par("mcastPort"));
 }
 
 void LteApp::processV2XMessage(PlatooningMessage& packet)

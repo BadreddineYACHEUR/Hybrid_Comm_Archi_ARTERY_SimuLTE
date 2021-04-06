@@ -1,4 +1,4 @@
-***Starting server on port 36201 ***
-Loading net-file from 'highway-hybrid.net.xml' ... done (0ms).
+***Starting server on port 39259 ***
+Loading net-file from './sumo_network/highway-hybrid.net.xml' ... done (1ms).
 Loading done.
 Simulation version 1.8.0 started with time: 0.00

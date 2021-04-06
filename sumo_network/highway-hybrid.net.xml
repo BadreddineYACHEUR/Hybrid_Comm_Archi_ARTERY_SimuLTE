@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on lun. 29 mars 2021 17:39:57 by Eclipse SUMO netedit Version 1.8.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network/highway-hybrid.net.xml"/>
+    </input>
+
+    <output>
+        <output-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network/highway-hybrid.net.xml"/>
+    </output>
+
+    <processing>
+        <geometry.min-radius.fix.railways value="false"/>
+        <geometry.max-grade.fix value="false"/>
+        <offset.disable-normalization value="true"/>
+        <lefthand value="false"/>
+    </processing>
+
+    <junctions>
+        <no-internal-links value="true"/>
+        <no-turnarounds value="true"/>
+        <junctions.corner-detail value="5"/>
+        <junctions.limit-turn-speed value="5.5"/>
+        <rectangular-lane-cut value="false"/>
+    </junctions>
+
+    <pedestrian>
+        <walkingareas value="false"/>
+    </pedestrian>
+
+    <report>
+        <aggregate-warnings value="5"/>
+    </report>
+
+</configuration>
+-->
+
+<net version="1.6" junctionCornerDetail="5" limitTurnSpeed="5.50" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+
+    <location netOffset="0.00,0.00" convBoundary="-2968.74,-1064.47,339.90,-1064.47" origBoundary="-10000000000.00,-10000000000.00,10000000000.00,10000000000.00" projParameter="!"/>
+
+    <edge id="-edge1" from="jun1" to="jun2" priority="-1">
+        <lane id="-edge1_0" index="0" speed="13.89" length="3308.64" shape="-2968.74,-1069.27 339.90,-1069.27"/>
+        <lane id="-edge1_1" index="1" speed="13.89" length="3308.64" shape="-2968.74,-1066.07 339.90,-1066.07"/>
+    </edge>
+    <edge id="edge1" from="jun2" to="jun1" priority="-1">
+        <lane id="edge1_0" index="0" speed="13.89" length="3308.64" shape="339.90,-1059.67 -2968.74,-1059.67"/>
+        <lane id="edge1_1" index="1" speed="13.89" length="3308.64" shape="339.90,-1062.87 -2968.74,-1062.87"/>
+    </edge>
+
+    <junction id="jun1" type="dead_end" x="-2968.74" y="-1064.47" incLanes="edge1_0 edge1_1" intLanes="" shape="-2968.74,-1064.47 -2968.74,-1058.07 -2968.74,-1064.47"/>
+    <junction id="jun2" type="dead_end" x="339.90" y="-1064.47" incLanes="-edge1_0 -edge1_1" intLanes="" shape="339.90,-1064.47 339.90,-1070.87 339.90,-1064.47"/>
+
+</net>

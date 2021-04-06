@@ -1,14 +1,14 @@
 version 2
-run Hybrid_communication-0-20210316-11:37:30-6288
+run Hybrid_communication-0-20210402-12:22:36-56883
 attr configname Hybrid_communication
-attr datetime 20210316-11:37:30
+attr datetime 20210402-12:22:36
 attr experiment Hybrid_communication
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network artery.lte.World
-attr processid 6288
+attr processid 56883
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -27,12 +27,12 @@ param *.node[*].udpApp[0].mcastAddress "\"224.0.0.23\""
 param *.node[*].configurator.mcastGroups "\"224.0.0.23\""
 param *.traci.core.version -1
 param *.traci.launcher.typename "\"PosixLauncher\""
-param *.traci.launcher.sumocfg "\"highway-hybrid.sumocfg\""
+param *.traci.launcher.sumocfg "\"./sumo_network/highway-hybrid.sumocfg\""
 param *.channelControl.pMax 10W
 param *.channelControl.alpha 1.0
 param *.channelControl.carrierFrequency "2.1 GHz"
 param *.configurator.config "xmldoc(\"lte_network.xml\")"
-param *.numLteBaseStations 1
+param *.numLteBaseStations 2
 param *.eNodeB[*].lteNic.phy.feedbackComputation "xmldoc(\"lte_channel.xml\")"
 param *.eNodeB[*].lteNic.phy.channelModel "xmldoc(\"lte_channel.xml\")"
 param *.eNodeB[*].lteNic.phy.dynamicCellAssociation true
@@ -40,8 +40,14 @@ param *.eNodeB[*].lteNic.phy.enableHandover true
 param *.eNodeB[*].cellInfo.broadcastMessageInterval "0.5 s"
 param *.eNodeB[*].sctp.nagleEnabled false
 param *.eNodeB[*].sctp.enableHeartbeats false
-param *.eNodeB[0].mobility.initialX 1700m
+param *.eNodeB[*].numX2Apps 1
+param *.eNodeB[*].x2App[*].server.localPort "5000 + ancestorIndex(1)"
+param *.eNodeB[0].x2App[0].client.connectAddress "\"eNodeB[1]%x2ppp0\""
+param *.eNodeB[1].x2App[0].client.connectAddress "\"eNodeB[0]%x2ppp0\""
+param *.eNodeB[0].mobility.initialX 750m
 param *.eNodeB[0].mobility.initialY 200m
+param *.eNodeB[1].mobility.initialX 2250m
+param *.eNodeB[1].mobility.initialY 200m
 param *.node[*].lteNic.dlFbGen.feedbackComputation "xmldoc(\"lte_channel.xml\")"
 param *.node[*].lteNic.phy.channelModel "xmldoc(\"lte_channel.xml\")"
 param *.node[*].lteNic.phy.dynamicCellAssociation true
@@ -56,5 +62,7 @@ param *.node[*].middleware.updateInterval "0.1 s"
 param *.node[*].middleware.datetime "\"2018-04-04 15:00:00\""
 param *.node[*].middleware.services "xmldoc(\"services.xml\")"
 
-scalar World.traci.launcher port 36201
+scalar World.eNodeB[0].x2App[0].client ums 1452
+scalar World.eNodeB[1].x2App[0].client ums 1452
+scalar World.traci.launcher port 39259
 
