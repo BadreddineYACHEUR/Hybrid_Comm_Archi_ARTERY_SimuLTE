@@ -16,7 +16,9 @@ packet PlatooningMessage
 
 	//leader response
 	bool accepted = false;
+	string joinerId;
 	int platoonSize = 0;
+	int affectedId;
 
 
     

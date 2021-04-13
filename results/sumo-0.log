@@ -1,4 +1,14 @@
-***Starting server on port 39259 ***
-Loading net-file from './sumo_network/highway-hybrid.net.xml' ... done (1ms).
+***Starting server on port 51735 ***
+Loading net-file from './sumo_network/highway-hybrid.net.xml' ... done (0ms).
 Loading done.
-Simulation version 1.8.0 started with time: 0.00
+Simulation started with time: 0.00
+Simulation ended at time: 47.30
+Performance: 
+ Duration: 75.49s
+ Real time factor: 0.626615
+ UPS: 24.349208
+Vehicles: 
+ Inserted: 6
+ Running: 6
+ Waiting: 0
+

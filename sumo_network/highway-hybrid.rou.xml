@@ -48,10 +48,17 @@
     <!-- <flow id="free_flow_1" begin="5.00" color="blue" end="3600.00" number="1800">
         <route edges="-edge1" color="cyan"/>
     </flow> -->
-    <vehicle id="platoon_leader" depart="30.00" departSpeed="10.00" color="yellow">
+
+    <vType id="platoonLeader" length="5" maxSpeed="50" speedFactor="1"/> 
+
+    <vType id="platoonFollower" length="5" maxSpeed="50" carFollowModel="CACC" minGap="2" speedFactor="1.5"/> 
+
+    <vehicle id="platoon_leader" depart="0.00" departSpeed="0" color="yellow" type="platoonLeader">
         <route edges="-edge1" color="cyan"/>
     </vehicle>
-    <flow id="platoon_follower" begin="30.00" color="red" number="5" vehsPerHour="480.00">
+
+    <flow id="platoon_follower" begin="5.00" departSpeed="0" type="platoonFollower" color="red" number="5" vehsPerHour="480.00">
         <route edges="-edge1" color="cyan"/>
     </flow>
+
 </routes>

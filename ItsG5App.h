@@ -2,9 +2,15 @@
 #define ITSG5APP_H_
 
 #include "artery/application/ItsG5Service.h"
+#include <list>
 
 // forward declaration
 namespace traci { class VehicleController; }
+
+struct platoonMember {
+    std::string vehicleId;
+    int idInPlatoon;
+}; 
 
 class ItsG5App : public artery::ItsG5Service
 {
@@ -17,13 +23,17 @@ class ItsG5App : public artery::ItsG5Service
     	void indicate(const vanetza::btp::DataIndication&, omnetpp::cPacket*) override;
         void initialize() override;
         void CACCSpeedControl(std::string vehicle_id, double desired_speed, double vehicle_speed);
-        void CACCGapControl(double vehicle_speed, double preceding_vehicle_speed, double distance, double vehicle_accel);
+        void CACCGapControl(std::string vehicle_id, std::string pre_vehicle_id, double vehicle_speed, double preceding_vehicle_speed, double distance, double vehicle_accel);
         double squarDistance(double xPosV1, double xPosV2, double yPosV1, double yPosV2);
 
         omnetpp::simsignal_t LteSignal;
         int messageId = 0;
         int platoonId;
         int platoonSize = 0;
+        double leader_speed = 0;
+
+        bool is_in_platoon = false;
+        std::list <platoonMember> platoonMembers;
         traci::VehicleController* mVehicleController = nullptr;
 };
 

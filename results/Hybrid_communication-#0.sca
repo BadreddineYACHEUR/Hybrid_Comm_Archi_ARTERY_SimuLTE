@@ -1,14 +1,14 @@
 version 2
-run Hybrid_communication-0-20210402-12:22:36-56883
+run Hybrid_communication-0-20210413-14:21:48-65063
 attr configname Hybrid_communication
-attr datetime 20210402-12:22:36
+attr datetime 20210413-14:21:48
 attr experiment Hybrid_communication
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network artery.lte.World
-attr processid 56883
+attr processid 65063
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -27,6 +27,7 @@ param *.node[*].udpApp[0].mcastAddress "\"224.0.0.23\""
 param *.node[*].configurator.mcastGroups "\"224.0.0.23\""
 param *.traci.core.version -1
 param *.traci.launcher.typename "\"PosixLauncher\""
+param *.traci.launcher.sumo "\"sumo-gui\""
 param *.traci.launcher.sumocfg "\"./sumo_network/highway-hybrid.sumocfg\""
 param *.channelControl.pMax 10W
 param *.channelControl.alpha 1.0
@@ -64,5 +65,5 @@ param *.node[*].middleware.services "xmldoc(\"services.xml\")"
 
 scalar World.eNodeB[0].x2App[0].client ums 1452
 scalar World.eNodeB[1].x2App[0].client ums 1452
-scalar World.traci.launcher port 39259
+scalar World.traci.launcher port 51735
 
