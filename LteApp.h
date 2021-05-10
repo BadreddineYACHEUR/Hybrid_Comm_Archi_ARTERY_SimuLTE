@@ -29,6 +29,8 @@ private:
     int mcastPort;
     int messageReceived;
     traci::VehicleController* vehicleController = nullptr;
+
+    omnetpp::simsignal_t lteToSubAppSignal;
 };
 
 

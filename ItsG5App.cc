@@ -14,10 +14,16 @@ using namespace vanetza;
 
 Define_Module(ItsG5App)
 
+static const simsignal_t fromSubAppSignal = cComponent::registerSignal("toItsG5Signal");
+
 void ItsG5App::initialize()
 {
     ItsG5BaseService::initialize();
     LteSignal = cComponent::registerSignal("LteSignal");
+    itsG5ToSubAppSignal = cComponent::registerSignal("itsG5ToSubAppSignal");
+
+    subscribe(fromSubAppSignal);
+
     mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();
     const std::string vehicle_id = mVehicleController->getVehicleId();
     mVehicleController->setSpeed(15 * units::si::meter_per_second);
@@ -366,3 +372,6 @@ void ItsG5App::CACCGapControl(std::string vehicle_id, std::string pre_vehicle_id
 
 
 }
+
+void ItsG5App::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObject*)
+{}

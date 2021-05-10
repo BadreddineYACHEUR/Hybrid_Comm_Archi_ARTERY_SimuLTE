@@ -13,6 +13,7 @@ using namespace omnetpp;
 Define_Module(LteApp)
 
 static const simsignal_t lteSignal = cComponent::registerSignal("LteSignal");
+static const simsignal_t fromSubAppSignal = cComponent::registerSignal("toLteSignal");
 
 
 int LteApp::numInitStages() const
@@ -32,6 +33,7 @@ void LteApp::initialize(int stage)
     socket.setOutputGate(gate("udpOut"));
     socket.bind(mcastPort);
     getParentModule()->subscribe(lteSignal, this);
+    getParentModule()->subscribe(fromSubAppSignal, this);
 
     // LTE multicast support
     inet::IInterfaceTable *ift = inet::getModuleFromPar<inet::IInterfaceTable>(par("interfaceTableModule"), this);
@@ -49,6 +51,8 @@ void LteApp::initialize(int stage)
     
     messageReceived = 0;
     WATCH(messageReceived);
+
+    lteToSubAppSignal = cComponent::registerSignal("lteToSubAppSignal");
 
     //omnetpp::cMessage trigger = new omnetpp::cMessage("send message");
     //scheduleAt(simTime() + 1 trigger);

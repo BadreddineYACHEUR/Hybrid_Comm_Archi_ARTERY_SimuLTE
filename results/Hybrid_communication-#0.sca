@@ -1,14 +1,14 @@
 version 2
-run Hybrid_communication-0-20210413-14:21:48-65063
+run Hybrid_communication-0-20210510-16:37:46-9598
 attr configname Hybrid_communication
-attr datetime 20210413-14:21:48
+attr datetime 20210510-16:37:46
 attr experiment Hybrid_communication
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network artery.lte.World
-attr processid 65063
+attr processid 9598
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -19,12 +19,10 @@ param *.node[*].nicType "\"LteNicUeD2D\""
 param **.amcMode "\"D2D\""
 param **.d2dCqi 7
 param **.usePreconfiguredTxParams true
-param *.server.numUdpApss 0
-param *.node[*].numUdpApps 1
-param *.node[*].udpApp[0].typename "\"LteApp\""
-param *.node[*].udpApp[0].middlewareModule "\"^.middleware\""
-param *.node[*].udpApp[0].mcastAddress "\"224.0.0.23\""
-param *.node[*].configurator.mcastGroups "\"224.0.0.23\""
+param *.node[*].middleware.HybridService.num_sub_apps 2
+param *.node[*].middleware.HybridService.subApp[0].interface_type "\"ItsG5\""
+param *.node[*].middleware.HybridService.subApp[1].interface_type "\"LTEMode3\""
+param *.node[*].middleware.HybridService.communication_mode "\"DupCommMode\""
 param *.traci.core.version -1
 param *.traci.launcher.typename "\"PosixLauncher\""
 param *.traci.launcher.sumo "\"sumo-gui\""
@@ -65,5 +63,5 @@ param *.node[*].middleware.services "xmldoc(\"services.xml\")"
 
 scalar World.eNodeB[0].x2App[0].client ums 1452
 scalar World.eNodeB[1].x2App[0].client ums 1452
-scalar World.traci.launcher port 51735
+scalar World.traci.launcher port 34547
 

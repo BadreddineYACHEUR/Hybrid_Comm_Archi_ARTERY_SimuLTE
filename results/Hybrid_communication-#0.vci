@@ -1,15 +1,15 @@
-file 13249788 1618316587                                        
+file 32153 1620657549                                           
 version 2
-run Hybrid_communication-0-20210413-14:21:48-65063
+run Hybrid_communication-0-20210510-16:37:46-9598
 attr configname Hybrid_communication
-attr datetime 20210413-14:21:48
+attr datetime 20210510-16:37:46
 attr experiment Hybrid_communication
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network artery.lte.World
-attr processid 65063
+attr processid 9598
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -20,12 +20,10 @@ param *.node[*].nicType "\"LteNicUeD2D\""
 param **.amcMode "\"D2D\""
 param **.d2dCqi 7
 param **.usePreconfiguredTxParams true
-param *.server.numUdpApss 0
-param *.node[*].numUdpApps 1
-param *.node[*].udpApp[0].typename "\"LteApp\""
-param *.node[*].udpApp[0].middlewareModule "\"^.middleware\""
-param *.node[*].udpApp[0].mcastAddress "\"224.0.0.23\""
-param *.node[*].configurator.mcastGroups "\"224.0.0.23\""
+param *.node[*].middleware.HybridService.num_sub_apps 2
+param *.node[*].middleware.HybridService.subApp[0].interface_type "\"ItsG5\""
+param *.node[*].middleware.HybridService.subApp[1].interface_type "\"LTEMode3\""
+param *.node[*].middleware.HybridService.communication_mode "\"DupCommMode\""
 param *.traci.core.version -1
 param *.traci.launcher.typename "\"PosixLauncher\""
 param *.traci.launcher.sumo "\"sumo-gui\""
@@ -293,1116 +291,120 @@ attr title "contention state, vector"
 vector 115 World.eNodeB[0].lteNic.mac receivedPacketFromLowerLayer:vector(packetBytes) ETV
 attr interpolationmode none
 attr source receivedPacketFromLowerLayer
-vector 116 World.node[0].wlan[0].mac rcvdPkFromHL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromUpper
-attr title "packets received from higher layer, vector(packetBytes)"
-vector 117 World.node[0].wlan[0].mac sentDownPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToLower
-attr title "packets sent to lower layer, vector(packetBytes)"
-vector 118 World.node[0].wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-vector 119 World.node[1].wlan[0].radio radioMode:vector ETV
-attr interpolationmode sample-hold
-attr source radioModeChanged
-attr title "Radio mode, vector"
-vector 120 World.node[1].wlan[0].radio radioChannel:vector ETV
-attr interpolationmode sample-hold
-attr source radioChannelChanged
-attr title "Radio channel, vector"
-vector 121 World.node[1].lteNic.phy servingCell:vector ETV
-attr source servingCell
-attr title "ID of the serving eNodeB for the UE, vector"
-attr unit ""
-vector 122 World.node[1].wlan[0].radio receptionState:vector ETV
-attr interpolationmode sample-hold
-attr source receptionStateChanged
-attr title "Radio reception state, vector"
-vector 123 World.node[1].wlan[0].mac.dcf.channelAccess.contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 124 World.node[1].wlan[0].mac.hcf.edca.edcaf[0].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 125 World.node[1].wlan[0].mac.hcf.edca.edcaf[1].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 126 World.node[1].wlan[0].mac.hcf.edca.edcaf[2].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 127 World.node[1].wlan[0].mac.hcf.edca.edcaf[3].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 128 World.node[1].wlan[0].mac rcvdPkFromLL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromLower
-attr title "packets received from lower layer, vector(packetBytes)"
-vector 129 World.node[1].wlan[0].mac passedUpPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToUpper
-attr title "packets passed to higher layer, vector(packetBytes)"
-vector 130 World.node[1].wlan[0].mac rcvdPkFromHL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromUpper
-attr title "packets received from higher layer, vector(packetBytes)"
-vector 131 World.node[1].wlan[0].mac sentDownPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToLower
-attr title "packets sent to lower layer, vector(packetBytes)"
-vector 132 World.node[1].wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-vector 133 World.node[0].wlan[0].mac rcvdPkFromLL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromLower
-attr title "packets received from lower layer, vector(packetBytes)"
-vector 134 World.node[0].wlan[0].mac passedUpPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToUpper
-attr title "packets passed to higher layer, vector(packetBytes)"
-vector 135 World.node[0].udp sentPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPk
-attr title "packets sent, vector(packetBytes)"
-vector 136 World.node[0].lteNic.pdcpRrc receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 137 World.node[0].lteNic.pdcpRrc sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 138 World.node[0].lteNic.rlc.um receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 139 World.node[0].lteNic.mac receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 140 World.node[0].lteNic.mac sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 141 World.eNodeB[0].lteNic.mac sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 142 World.node[1].udp sentPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPk
-attr title "packets sent, vector(packetBytes)"
-vector 143 World.node[1].lteNic.pdcpRrc receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 144 World.node[1].lteNic.pdcpRrc sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 145 World.node[1].lteNic.rlc.um receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 146 World.node[1].lteNic.mac receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 147 World.node[1].lteNic.mac sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 148 World.node[0].lteNic.mac receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 149 World.node[0].lteNic.phy averageCqiUl:vector ETV
-attr source averageCqiUl
-attr title "Average Cqi reported in UL, vector"
-attr unit cqi
-vector 150 World.node[1].lteNic.mac receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 151 World.eNodeB[0].lteNic.channelModel rcvdSinr:vector ETV
-attr source rcvdSinr
-attr title "SINR measured at packet reception, vector"
-attr unit dB
-vector 152 World.node[0].lteNic.mac macDelayUl:vector ETV
-attr source macDelayUl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 153 World.eNodeB[0].lteNic.mac measuredItbs:vector ETV
-attr source measuredItbs
-attr title "TBS index, vector"
-attr unit ""
-vector 154 World.node[0].lteNic.mac harqErrorRate_1st_Ul:vector ETV
-attr source harqErrorRate_1st_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 155 World.node[0].lteNic.mac harqErrorRateUl:vector ETV
-attr source harqErrorRateUl
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 156 World.node[0].lteNic.mac sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 157 World.node[0].lteNic.rlc.um sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 158 World.node[0].lteNic.phy averageCqiD2D:vector ETV
-attr source averageCqiD2D
-attr title "Average Cqi reported in D2D, vector"
-attr unit cqi
-vector 159 World.node[0].lteNic.mac macDelayDl:vector ETV
-attr source macDelayDl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 160 World.node[1].lteNic.mac sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 161 World.node[1].lteNic.rlc.um receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 162 World.node[1].lteNic.rlc.um sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 163 World.node[1].lteNic.pdcpRrc receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 164 World.node[1].lteNic.pdcpRrc sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 165 World.node[1].udp rcvdPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source rcvdPk
-attr title "packets received, vector(packetBytes)"
-vector 166 World.node[1].udp passedUpPk:vector(count) ETV
-attr interpolationmode none
-attr title "packets passed up, vector(count)"
-vector 167 World.node[1].lteNic.phy averageCqiUl:vector ETV
-attr source averageCqiUl
-attr title "Average Cqi reported in UL, vector"
-attr unit cqi
-vector 168 World.node[1].lteNic.mac macDelayUl:vector ETV
-attr source macDelayUl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 169 World.node[1].lteNic.mac harqErrorRate_1st_Ul:vector ETV
-attr source harqErrorRate_1st_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 170 World.node[1].lteNic.mac harqErrorRateUl:vector ETV
-attr source harqErrorRateUl
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 171 World.node[1].lteNic.rlc.um sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 172 World.node[1].lteNic.phy averageCqiD2D:vector ETV
-attr source averageCqiD2D
-attr title "Average Cqi reported in D2D, vector"
-attr unit cqi
-vector 173 World.node[1].lteNic.mac macDelayDl:vector ETV
-attr source macDelayDl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 174 World.node[0].lteNic.rlc.um receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 175 World.node[0].lteNic.rlc.um sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 176 World.node[0].lteNic.pdcpRrc receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 177 World.node[0].lteNic.pdcpRrc sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 178 World.node[0].udp rcvdPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source rcvdPk
-attr title "packets received, vector(packetBytes)"
-vector 179 World.node[0].udp passedUpPk:vector(count) ETV
-attr interpolationmode none
-attr title "packets passed up, vector(count)"
-vector 180 World.node[1].lteNic.mac harqErrorRate_2nd_Ul:vector ETV
-attr source harqErrorRate_2nd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 181 World.node[1].lteNic.mac harqErrorRate_3rd_Ul:vector ETV
-attr source harqErrorRate_3rd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 182 World.node[2].wlan[0].radio radioMode:vector ETV
-attr interpolationmode sample-hold
-attr source radioModeChanged
-attr title "Radio mode, vector"
-vector 183 World.node[2].wlan[0].radio radioChannel:vector ETV
-attr interpolationmode sample-hold
-attr source radioChannelChanged
-attr title "Radio channel, vector"
-vector 184 World.node[2].lteNic.phy servingCell:vector ETV
-attr source servingCell
-attr title "ID of the serving eNodeB for the UE, vector"
-attr unit ""
-vector 185 World.node[2].wlan[0].radio receptionState:vector ETV
-attr interpolationmode sample-hold
-attr source receptionStateChanged
-attr title "Radio reception state, vector"
-vector 186 World.node[2].wlan[0].mac.dcf.channelAccess.contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 187 World.node[2].wlan[0].mac.hcf.edca.edcaf[0].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 188 World.node[2].wlan[0].mac.hcf.edca.edcaf[1].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 189 World.node[2].wlan[0].mac.hcf.edca.edcaf[2].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 190 World.node[2].wlan[0].mac.hcf.edca.edcaf[3].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 191 World.node[2].lteNic.mac receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 192 World.node[2].lteNic.mac sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 193 World.node[2].lteNic.rlc.um receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 194 World.node[2].lteNic.rlc.um sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 195 World.node[2].lteNic.pdcpRrc receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 196 World.node[2].lteNic.pdcpRrc sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 197 World.node[2].udp rcvdPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source rcvdPk
-attr title "packets received, vector(packetBytes)"
-vector 198 World.node[2].udp passedUpPk:vector(count) ETV
-attr interpolationmode none
-attr title "packets passed up, vector(count)"
-vector 199 World.node[2].wlan[0].mac rcvdPkFromLL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromLower
-attr title "packets received from lower layer, vector(packetBytes)"
-vector 200 World.node[2].wlan[0].mac passedUpPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToUpper
-attr title "packets passed to higher layer, vector(packetBytes)"
-vector 201 World.node[2].udp sentPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPk
-attr title "packets sent, vector(packetBytes)"
-vector 202 World.node[2].wlan[0].mac rcvdPkFromHL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromUpper
-attr title "packets received from higher layer, vector(packetBytes)"
-vector 203 World.node[2].lteNic.pdcpRrc receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 204 World.node[2].lteNic.pdcpRrc sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 205 World.node[2].lteNic.rlc.um receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 206 World.node[2].lteNic.mac receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 207 World.node[2].wlan[0].mac sentDownPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToLower
-attr title "packets sent to lower layer, vector(packetBytes)"
-vector 208 World.node[2].wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-vector 209 World.node[2].lteNic.mac sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 210 World.node[2].lteNic.phy averageCqiUl:vector ETV
-attr source averageCqiUl
-attr title "Average Cqi reported in UL, vector"
-attr unit cqi
-vector 211 World.node[2].lteNic.mac harqErrorRate_1st_Ul:vector ETV
-attr source harqErrorRate_1st_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 212 World.node[2].lteNic.mac harqErrorRateUl:vector ETV
-attr source harqErrorRateUl
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 213 World.node[2].lteNic.mac macDelayUl:vector ETV
-attr source macDelayUl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 214 World.node[2].lteNic.mac harqErrorRate_2nd_Ul:vector ETV
-attr source harqErrorRate_2nd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 215 World.node[2].lteNic.rlc.um sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 216 World.node[2].lteNic.phy averageCqiD2D:vector ETV
-attr source averageCqiD2D
-attr title "Average Cqi reported in D2D, vector"
-attr unit cqi
-vector 217 World.node[2].lteNic.mac macDelayDl:vector ETV
-attr source macDelayDl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 218 World.node[0].lteNic.mac harqErrorRate_2nd_Ul:vector ETV
-attr source harqErrorRate_2nd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 219 World.node[3].wlan[0].radio radioMode:vector ETV
-attr interpolationmode sample-hold
-attr source radioModeChanged
-attr title "Radio mode, vector"
-vector 220 World.node[3].wlan[0].radio radioChannel:vector ETV
-attr interpolationmode sample-hold
-attr source radioChannelChanged
-attr title "Radio channel, vector"
-vector 221 World.node[3].lteNic.phy servingCell:vector ETV
-attr source servingCell
-attr title "ID of the serving eNodeB for the UE, vector"
-attr unit ""
-vector 222 World.node[3].wlan[0].radio receptionState:vector ETV
-attr interpolationmode sample-hold
-attr source receptionStateChanged
-attr title "Radio reception state, vector"
-vector 223 World.node[3].wlan[0].mac.dcf.channelAccess.contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 224 World.node[3].wlan[0].mac.hcf.edca.edcaf[0].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 225 World.node[3].wlan[0].mac.hcf.edca.edcaf[1].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 226 World.node[3].wlan[0].mac.hcf.edca.edcaf[2].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 227 World.node[3].wlan[0].mac.hcf.edca.edcaf[3].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 228 World.node[3].wlan[0].mac rcvdPkFromLL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromLower
-attr title "packets received from lower layer, vector(packetBytes)"
-vector 229 World.node[3].wlan[0].mac passedUpPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToUpper
-attr title "packets passed to higher layer, vector(packetBytes)"
-vector 230 World.node[3].lteNic.mac receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 231 World.node[3].lteNic.mac sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 232 World.node[3].lteNic.rlc.um receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 233 World.node[3].lteNic.rlc.um sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 234 World.node[3].lteNic.pdcpRrc receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 235 World.node[3].lteNic.pdcpRrc sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 236 World.node[3].udp rcvdPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source rcvdPk
-attr title "packets received, vector(packetBytes)"
-vector 237 World.node[3].udp passedUpPk:vector(count) ETV
-attr interpolationmode none
-attr title "packets passed up, vector(count)"
-vector 238 World.node[3].udp sentPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPk
-attr title "packets sent, vector(packetBytes)"
-vector 239 World.node[3].wlan[0].mac rcvdPkFromHL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromUpper
-attr title "packets received from higher layer, vector(packetBytes)"
-vector 240 World.node[3].lteNic.pdcpRrc receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 241 World.node[3].lteNic.pdcpRrc sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 242 World.node[3].lteNic.rlc.um receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 243 World.node[3].lteNic.mac receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 244 World.node[3].wlan[0].mac sentDownPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToLower
-attr title "packets sent to lower layer, vector(packetBytes)"
-vector 245 World.node[3].wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-vector 246 World.node[3].lteNic.mac sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 247 World.node[3].lteNic.phy averageCqiUl:vector ETV
-attr source averageCqiUl
-attr title "Average Cqi reported in UL, vector"
-attr unit cqi
-vector 248 World.node[3].lteNic.mac harqErrorRate_1st_Ul:vector ETV
-attr source harqErrorRate_1st_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 249 World.node[3].lteNic.mac harqErrorRateUl:vector ETV
-attr source harqErrorRateUl
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 250 World.node[3].lteNic.mac macDelayUl:vector ETV
-attr source macDelayUl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 251 World.node[3].lteNic.mac harqErrorRate_2nd_Ul:vector ETV
-attr source harqErrorRate_2nd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 252 World.node[3].lteNic.rlc.um sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 253 World.node[3].lteNic.phy averageCqiD2D:vector ETV
-attr source averageCqiD2D
-attr title "Average Cqi reported in D2D, vector"
-attr unit cqi
-vector 254 World.node[3].lteNic.mac macDelayDl:vector ETV
-attr source macDelayDl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 255 World.node[3].lteNic.mac harqErrorRate_3rd_Ul:vector ETV
-attr source harqErrorRate_3rd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 256 World.node[4].wlan[0].radio radioMode:vector ETV
-attr interpolationmode sample-hold
-attr source radioModeChanged
-attr title "Radio mode, vector"
-vector 257 World.node[4].wlan[0].radio radioChannel:vector ETV
-attr interpolationmode sample-hold
-attr source radioChannelChanged
-attr title "Radio channel, vector"
-vector 258 World.node[4].lteNic.phy servingCell:vector ETV
-attr source servingCell
-attr title "ID of the serving eNodeB for the UE, vector"
-attr unit ""
-vector 259 World.node[4].wlan[0].radio receptionState:vector ETV
-attr interpolationmode sample-hold
-attr source receptionStateChanged
-attr title "Radio reception state, vector"
-vector 260 World.node[4].wlan[0].mac.dcf.channelAccess.contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 261 World.node[4].wlan[0].mac.hcf.edca.edcaf[0].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 262 World.node[4].wlan[0].mac.hcf.edca.edcaf[1].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 263 World.node[4].wlan[0].mac.hcf.edca.edcaf[2].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 264 World.node[4].wlan[0].mac.hcf.edca.edcaf[3].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 265 World.node[4].lteNic.mac receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 266 World.node[4].wlan[0].mac rcvdPkFromLL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromLower
-attr title "packets received from lower layer, vector(packetBytes)"
-vector 267 World.node[4].wlan[0].mac passedUpPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToUpper
-attr title "packets passed to higher layer, vector(packetBytes)"
-vector 268 World.node[4].lteNic.mac sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 269 World.node[4].lteNic.rlc.um receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 270 World.node[4].lteNic.rlc.um sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 271 World.node[4].lteNic.pdcpRrc receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 272 World.node[4].lteNic.pdcpRrc sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 273 World.node[4].udp rcvdPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source rcvdPk
-attr title "packets received, vector(packetBytes)"
-vector 274 World.node[4].udp passedUpPk:vector(count) ETV
-attr interpolationmode none
-attr title "packets passed up, vector(count)"
-vector 275 World.node[4].udp sentPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPk
-attr title "packets sent, vector(packetBytes)"
-vector 276 World.node[4].wlan[0].mac rcvdPkFromHL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromUpper
-attr title "packets received from higher layer, vector(packetBytes)"
-vector 277 World.node[4].lteNic.pdcpRrc receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 278 World.node[4].lteNic.pdcpRrc sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 279 World.node[4].lteNic.rlc.um receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 280 World.node[4].lteNic.mac receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 281 World.node[4].wlan[0].mac sentDownPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToLower
-attr title "packets sent to lower layer, vector(packetBytes)"
-vector 282 World.node[4].wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-vector 283 World.node[4].lteNic.mac sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 284 World.node[4].lteNic.phy averageCqiUl:vector ETV
-attr source averageCqiUl
-attr title "Average Cqi reported in UL, vector"
-attr unit cqi
-vector 285 World.node[4].lteNic.mac macDelayUl:vector ETV
-attr source macDelayUl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 286 World.node[4].lteNic.mac harqErrorRate_1st_Ul:vector ETV
-attr source harqErrorRate_1st_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 287 World.node[4].lteNic.mac harqErrorRateUl:vector ETV
-attr source harqErrorRateUl
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 288 World.node[4].lteNic.rlc.um sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 289 World.node[4].lteNic.phy averageCqiD2D:vector ETV
-attr source averageCqiD2D
-attr title "Average Cqi reported in D2D, vector"
-attr unit cqi
-vector 290 World.node[4].lteNic.mac macDelayDl:vector ETV
-attr source macDelayDl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 291 World.node[4].lteNic.mac harqErrorRate_2nd_Ul:vector ETV
-attr source harqErrorRate_2nd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 292 World.node[4].lteNic.mac harqErrorRate_3rd_Ul:vector ETV
-attr source harqErrorRate_3rd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-102	42628 626462 102 406340 0.001 32.768 32768 0 32 5991 25745
-103	669090 626436 102 406340 0.001 32.768 32768 0 0 0 0
-104	1295526 626436 103 406341 0.001 32.768 32768 0 0 0 0
-105	1921962 626436 103 406341 0.001 32.768 32768 0 0 0 0
-vector 293 World.node[5].wlan[0].radio radioMode:vector ETV
-attr interpolationmode sample-hold
-attr source radioModeChanged
-attr title "Radio mode, vector"
-vector 294 World.node[5].wlan[0].radio radioChannel:vector ETV
-attr interpolationmode sample-hold
-attr source radioChannelChanged
-attr title "Radio channel, vector"
-vector 295 World.node[5].lteNic.phy servingCell:vector ETV
-attr source servingCell
-attr title "ID of the serving eNodeB for the UE, vector"
-attr unit ""
-vector 296 World.node[5].wlan[0].radio receptionState:vector ETV
-attr interpolationmode sample-hold
-attr source receptionStateChanged
-attr title "Radio reception state, vector"
-vector 297 World.node[5].wlan[0].mac.dcf.channelAccess.contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 298 World.node[5].wlan[0].mac.hcf.edca.edcaf[0].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 299 World.node[5].wlan[0].mac.hcf.edca.edcaf[1].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 300 World.node[5].wlan[0].mac.hcf.edca.edcaf[2].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 301 World.node[5].wlan[0].mac.hcf.edca.edcaf[3].contention state:vector ETV
-attr interpolationmode none
-attr source stateChanged
-attr title "contention state, vector"
-vector 302 World.node[5].lteNic.mac receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 303 World.node[5].lteNic.mac sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 304 World.node[5].lteNic.rlc.um receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 305 World.node[5].lteNic.rlc.um sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 306 World.node[5].lteNic.pdcpRrc receivedPacketFromLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromLowerLayer
-vector 307 World.node[5].lteNic.pdcpRrc sentPacketToUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToUpperLayer
-vector 308 World.node[5].udp rcvdPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source rcvdPk
-attr title "packets received, vector(packetBytes)"
-vector 309 World.node[5].udp passedUpPk:vector(count) ETV
-attr interpolationmode none
-attr title "packets passed up, vector(count)"
-vector 310 World.node[5].wlan[0].mac rcvdPkFromLL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromLower
-attr title "packets received from lower layer, vector(packetBytes)"
-vector 311 World.node[5].wlan[0].mac passedUpPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToUpper
-attr title "packets passed to higher layer, vector(packetBytes)"
-vector 312 World.node[5].udp sentPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPk
-attr title "packets sent, vector(packetBytes)"
-vector 313 World.node[5].wlan[0].mac rcvdPkFromHL:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetReceivedFromUpper
-attr title "packets received from higher layer, vector(packetBytes)"
-vector 314 World.node[5].lteNic.pdcpRrc receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 315 World.node[5].lteNic.pdcpRrc sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 316 World.node[5].lteNic.rlc.um receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 317 World.node[5].lteNic.mac receivedPacketFromUpperLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source receivedPacketFromUpperLayer
-vector 318 World.node[5].wlan[0].mac sentDownPk:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetSentToLower
-attr title "packets sent to lower layer, vector(packetBytes)"
-vector 319 World.node[5].wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-vector 320 World.node[5].lteNic.mac sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 321 World.node[5].lteNic.phy averageCqiUl:vector ETV
-attr source averageCqiUl
-attr title "Average Cqi reported in UL, vector"
-attr unit cqi
-vector 322 World.node[5].lteNic.mac macDelayUl:vector ETV
-attr source macDelayUl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 323 World.node[5].lteNic.mac harqErrorRate_1st_Ul:vector ETV
-attr source harqErrorRate_1st_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 324 World.node[5].lteNic.mac harqErrorRateUl:vector ETV
-attr source harqErrorRateUl
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 325 World.node[5].lteNic.rlc.um sentPacketToLowerLayer:vector(packetBytes) ETV
-attr interpolationmode none
-attr source sentPacketToLowerLayer
-vector 326 World.node[5].lteNic.phy averageCqiD2D:vector ETV
-attr source averageCqiD2D
-attr title "Average Cqi reported in D2D, vector"
-attr unit cqi
-vector 327 World.node[5].lteNic.mac macDelayDl:vector ETV
-attr source macDelayDl
-attr title "Delay at the MAC layer UL, vector"
-attr unit s
-vector 328 World.node[5].lteNic.mac harqErrorRate_2nd_Ul:vector ETV
-attr source harqErrorRate_2nd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-vector 329 World.node[5].lteNic.mac harqErrorRate_3rd_Ul:vector ETV
-attr source harqErrorRate_3rd_Ul
-attr title "Harq Error Rate Ul, vector"
-attr unit ""
-115	2554384 640952 525 544614 0.102 39.428 32768 0 2 4200 8400
-0	3195336 8 0 0 0 0 1 0 0 0 0
-1	3195344 8 0 0 0 0 1 0 0 0 0
-2	3195352 8 0 0 0 0 1 0 0 0 0
-3	3195360 155 0 93 0 0.0000004924 9 0 1 4 4
-4	3195515 8 0 0 0 0 1 0 0 0 0
-5	3195523 8 0 0 0 0 1 0 0 0 0
-6	3195531 8 0 0 0 0 1 0 0 0 0
-7	3195539 155 0 92 0 0.0000004924 9 0 1 4 4
-8	3195694 8 0 0 0 0 1 0 0 0 0
-9	3195702 8 0 0 0 0 1 0 0 0 0
-10	3195710 9 0 0 0 0 1 0 0 0 0
-11	3195719 9 0 0 0 0 1 0 0 0 0
-12	3195728 9 0 0 0 0 1 0 0 0 0
-13	3195737 9 0 0 0 0 1 0 0 0 0
-14	3195746 9 0 0 0 0 1 0 0 0 0
-15	3195755 9 0 0 0 0 1 0 0 0 0
-16	3195764 9 0 0 0 0 1 0 0 0 0
-17	3195773 9 0 0 0 0 1 0 0 0 0
-18	3195782 9 0 0 0 0 1 0 0 0 0
-19	3195791 9 0 0 0 0 1 0 0 0 0
-20	3195800 10 25 25 0 0 1 0 0 0 0
-21	3195810 10 30 30 0 0 1 0 0 0 0
-22	3195820 10 34 34 0 0 1 0 0 0 0
-23	3195830 10 34 34 0 0 1 0 0 0 0
-24	3195840 10 35 35 0 0 1 0 0 0 0
-25	3195850 10 35 35 0 0 1 0 0 0 0
-26	3195860 78 42 89 0 0.000000458 4 36 164 400 48704
-27	3195938 72 42 89 0 0.000000458 4 0 0 0 0
-28	3196010 78 43 88 0 0.000000458 4 36 164 400 48704
-29	3196088 72 43 88 0 0.000000458 4 0 0 0 0
-30	3196160 78 44 91 0 0.000000458 4 36 164 400 48704
-31	3196238 78 44 91 0 0.000000458 4 43 171 428 54500
-32	3196316 78 45 90 0 0.000000458 4 36 164 400 48704
-33	3196394 78 45 90 0 0.000000458 4 43 171 428 54500
-34	3196472 89 50 95 0.0000001228 0.0000005424 4 43 171 428 54500
-35	3196561 89 50 95 0.0000001228 0.0000005424 4 36 164 400 48704
-36	3196650 89 51 94 0.0000001228 0.0000005424 4 43 171 428 54500
-37	3196739 89 51 94 0.0000001228 0.0000005424 4 36 164 400 48704
-38	3196828 21 54 54 0.0000001228 0.0000001228 1 0 0 0 0
-39	3196849 25 54 54 0.0000001228 0.0000001228 1 65535 65535 65535 4294836225
-40	3196874 21 54 54 0.0000001228 0.0000001228 1 0 0 0 0
-41	3196895 21 54 54 0.0000001228 0.0000001228 1 0 0 0 0
-42	3196916 21 54 54 0.0000001228 0.0000001228 1 0 0 0 0
-43	3196937 21 55 55 0.0000001228 0.0000001228 1 0 0 0 0
-44	3196958 25 55 55 0.0000001228 0.0000001228 1 65535 65535 65535 4294836225
-45	3196983 21 55 55 0.0000001228 0.0000001228 1 0 0 0 0
-46	3197004 21 55 55 0.0000001228 0.0000001228 1 0 0 0 0
-47	3197025 21 55 55 0.0000001228 0.0000001228 1 0 0 0 0
-48	3197046 25 68 68 0.0000003096 0.0000003096 1 65535 65535 65535 4294836225
-49	3197071 21 68 68 0.0000003096 0.0000003096 1 0 0 0 0
-50	3197092 21 68 68 0.0000003096 0.0000003096 1 0 0 0 0
-51	3197113 25 69 69 0.0000003096 0.0000003096 1 65535 65535 65535 4294836225
-52	3197138 21 69 69 0.0000003096 0.0000003096 1 0 0 0 0
-53	3197159 21 69 69 0.0000003096 0.0000003096 1 0 0 0 0
-54	3197180 24 82 82 0.000000458 0.000000458 1 65535 65535 65535 4294836225
-55	3197204 23 82 82 0.000000458 0.000000458 1 4380 4380 4380 19184400
-56	3197227 25 82 82 0.000000458 0.000000458 1 0.1825 0.1825 0.1825 0.03330625
-57	3197252 20 82 82 0.000000458 0.000000458 1 3 3 3 9
-58	3197272 24 82 82 0.000000458 0.000000458 1 65535 65535 65535 4294836225
-59	3197296 23 82 82 0.000000458 0.000000458 1 8940 8940 8940 79923600
-60	3197319 25 82 82 0.000000458 0.000000458 1 0.3725 0.3725 0.3725 0.13875625
-61	3197344 20 82 82 0.000000458 0.000000458 1 3 3 3 9
-62	3197364 24 82 82 0.000000458 0.000000458 1 65535 65535 65535 4294836225
-63	3197388 23 82 82 0.000000458 0.000000458 1 8940 8940 8940 79923600
-64	3197411 25 82 82 0.000000458 0.000000458 1 0.3725 0.3725 0.3725 0.13875625
-65	3197436 20 82 82 0.000000458 0.000000458 1 3 3 3 9
-66	3197456 24 83 83 0.000000458 0.000000458 1 65535 65535 65535 4294836225
-67	3197480 23 83 83 0.000000458 0.000000458 1 4380 4380 4380 19184400
-68	3197503 25 83 83 0.000000458 0.000000458 1 0.1825 0.1825 0.1825 0.03330625
-69	3197528 20 83 83 0.000000458 0.000000458 1 3 3 3 9
-70	3197548 24 83 83 0.000000458 0.000000458 1 65535 65535 65535 4294836225
-71	3197572 23 83 83 0.000000458 0.000000458 1 8940 8940 8940 79923600
-72	3197595 25 83 83 0.000000458 0.000000458 1 0.3725 0.3725 0.3725 0.13875625
-73	3197620 20 83 83 0.000000458 0.000000458 1 3 3 3 9
-74	3197640 24 83 83 0.000000458 0.000000458 1 65535 65535 65535 4294836225
-75	3197664 23 83 83 0.000000458 0.000000458 1 8940 8940 8940 79923600
-76	3197687 25 83 83 0.000000458 0.000000458 1 0.3725 0.3725 0.3725 0.13875625
-77	3197712 20 83 83 0.000000458 0.000000458 1 3 3 3 9
-78	3197732 25 98 98 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
-79	3197757 24 98 98 0.0000005424 0.0000005424 1 4380 4380 4380 19184400
-80	3197781 26 98 98 0.0000005424 0.0000005424 1 0.1825 0.1825 0.1825 0.03330625
-81	3197807 21 98 98 0.0000005424 0.0000005424 1 3 3 3 9
-82	3197828 25 98 98 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
-83	3197853 24 98 98 0.0000005424 0.0000005424 1 8940 8940 8940 79923600
-84	3197877 26 98 98 0.0000005424 0.0000005424 1 0.3725 0.3725 0.3725 0.13875625
-85	3197903 21 98 98 0.0000005424 0.0000005424 1 3 3 3 9
-86	3197924 25 98 98 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
-87	3197949 24 98 98 0.0000005424 0.0000005424 1 8940 8940 8940 79923600
-88	3197973 26 98 98 0.0000005424 0.0000005424 1 0.3725 0.3725 0.3725 0.13875625
-89	3197999 21 98 98 0.0000005424 0.0000005424 1 3 3 3 9
-90	3198020 25 99 99 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
-91	3198045 24 99 99 0.0000005424 0.0000005424 1 4380 4380 4380 19184400
-92	3198069 26 99 99 0.0000005424 0.0000005424 1 0.1825 0.1825 0.1825 0.03330625
-93	3198095 21 99 99 0.0000005424 0.0000005424 1 3 3 3 9
-94	3198116 25 99 99 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
-95	3198141 24 99 99 0.0000005424 0.0000005424 1 8940 8940 8940 79923600
-96	3198165 26 99 99 0.0000005424 0.0000005424 1 0.3725 0.3725 0.3725 0.13875625
-97	3198191 21 99 99 0.0000005424 0.0000005424 1 3 3 3 9
-98	3198212 25 99 99 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
-99	3198237 24 99 99 0.0000005424 0.0000005424 1 8940 8940 8940 79923600
-100	3198261 27 99 99 0.0000005424 0.0000005424 1 0.3725 0.3725 0.3725 0.13875625
-101	3198288 22 99 99 0.0000005424 0.0000005424 1 3 3 3 9
-102	3198310 289540 406358 716745 32.769 47.326 14558 0 32 6652 21870
-103	3487850 289528 406358 716745 32.769 47.326 14558 0 0 0 0
-104	3777378 289528 406359 716746 32.769 47.326 14558 0 0 0 0
-105	4066906 289528 406359 716746 32.769 47.326 14558 0 0 0 0
-106	4356434 21909 500 714663 0.1 47.227041310415 764 0 3 1907 4957
-107	4378343 16 500 500 0.1 0.1 1 180 180 180 32400
-108	4378359 14 500 500 0.1 0.1 1 1 1 1 1
-109	4378373 97377 500 716586 0.1 47.31714403477 3381 0 3 5618 13472
-110	4475750 194754 500 716586 0.1 47.31714403477 6762 0 0 0 0
-111	4670504 195002 500 716586 0.1 47.31714403477 6774 0 2 12 24
-112	4865506 194754 500 716586 0.1 47.31714403477 6762 0 0 0 0
-113	5060260 238266 500 716586 0.1 47.31714403477 8274 0 2 1512 3024
-114	5298526 194754 500 716586 0.1 47.31714403477 6762 0 0 0 0
-115	5493280 202199 544616 716721 39.428 47.324 10220 0 2 1872 3744
-116	5695479 11699 16469 714623 2.895427 47.226817310415 381 74 132 50118 6602700
-117	5707178 11699 16472 714630 2.895427 47.226817310415 381 74 132 50118 6602700
-118	5718877 43762 16473 714663 2.895427 47.227041310415 1524 0 2 1524 2286
-119	5762639 21642 29071 714750 5.1 47.228868638276 750 0 3 1872 4866
-120	5784281 18 29071 29071 5.1 5.1 1 180 180 180 32400
-121	5784299 16 29071 29071 5.1 5.1 1 1 1 1 1
-122	5784315 97558 29071 716581 5.1 47.317143969042 3379 0 3 5635 13525
-123	5881873 195116 29071 716581 5.1 47.317143969042 6758 0 0 0 0
-124	6076989 195200 29071 716581 5.1 47.317143969042 6762 0 2 4 8
-125	6272189 195116 29071 716581 5.1 47.317143969042 6758 0 0 0 0
-126	6467305 238252 29071 716581 5.1 47.317143969042 8250 0 2 1492 2984
-127	6705557 195116 29071 716581 5.1 47.317143969042 6758 0 0 0 0
-128	6900673 40594 40316 716582 6.616404172208 47.317143969042 1315 74 132 173464 22888664
-129	6941267 40594 40316 716582 6.616404172208 47.317143969042 1315 74 132 173464 22888664
-130	6981861 11552 49783 714734 7.895427 47.228644638276 374 74 132 49310 6504628
-131	6993413 11552 49786 714741 7.895427 47.228644638276 374 74 132 49310 6504628
-132	7004965 43220 49787 714750 7.895427 47.228868638276 1496 0 2 1496 2244
-133	7048185 40358 49793 716587 7.895571208766 47.31714403477 1309 74 132 172730 22796068
-134	7088543 40358 49793 716587 7.895571208766 47.31714403477 1309 74 132 172730 22796068
-135	7128901 11304 65598 714618 10.026817310415 47.226817310415 378 58 58 21924 1271592
-136	7140205 11304 65604 714624 10.026817310415 47.226817310415 378 78 78 29484 2299752
-137	7151509 11304 65604 714624 10.026817310415 47.226817310415 378 79 79 29862 2359098
-138	7162813 11304 65605 714625 10.026817310415 47.226817310415 378 79 79 29862 2359098
-139	7174117 18879 65607 715007 10.026817310415 47.237 740 74 713 60448 5426974
-140	7192996 45102 65616 715012 10.027 47.237 2245 0 715 32738 3194524
-141	7238098 363244 65638 716730 10.028 47.325 18438 0 0 0 0
-142	7601342 11157 65641 714729 10.028644638276 47.228644638276 373 58 58 21634 1254772
-143	7612499 11157 65647 714735 10.028644638276 47.228644638276 373 78 78 29094 2269332
-144	7623656 11157 65647 714735 10.028644638276 47.228644638276 373 79 79 29467 2327893
-145	7634813 11157 65648 714736 10.028644638276 47.228644638276 373 79 79 29467 2327893
-146	7645970 18134 65650 715079 10.028644638276 47.239 705 77 711 59598 5794846
-147	7664104 88271 65671 715083 10.029 47.239 4431 0 713 32071 3591357
-148	7752375 90007 65680 716349 10.029 47.305 4483 0 794 107929 12863649
-149	7842382 14250 65699 714961 10.031 47.236 714 2 15 2216 11672
-150	7856632 131650 65703 716351 10.031 47.305 6557 0 794 108278 12452734
-151	7988282 101837 65714 716681 10.032 47.322 3008 -0.85363224227568 49.450461066835 55767.645688001 1222734.2726675
-152	8090119 16620 65740 715097 10.035 47.24 710 0.004 0.012 2.872 0.011872
-153	8106739 59869 65740 716730 10.035 47.325 2903 12 12 34836 418032
-154	8166608 14134 65761 715156 10.036 47.241 710 0 1 4 4
-155	8180742 14214 65761 715156 10.036 47.241 714 0 1 4 4
-156	8194956 21339 65768 715355 10.037 47.25 1046 0 711 60720 6543732
-157	8216295 7575 65770 715005 10.037 47.237 362 74 713 30586 3067876
-158	8223870 7206 65776 715013 10.037 47.237 362 7 7 2534 17738
-159	8231076 16523 65816 715142 10.041 47.241 690 0.004 0.004 2.76 0.01104
-160	8247599 22133 65816 715347 10.041 47.25 1083 0 792 65328 7214262
-161	8269732 15513 65818 715349 10.041 47.25 751 69 792 65328 7214262
-162	8285245 16608 65818 715349 10.041 47.25 805 79 79 63595 5024005
-163	8301853 16608 65819 715350 10.041 47.25 805 79 79 63595 5024005
-164	8318461 16608 65819 715350 10.041 47.25 805 78 78 62790 4897620
-165	8335069 16608 65825 715353 10.041 47.25 805 58 58 46690 2708020
-166	8351677 17305 65825 715353 10.041 47.25 805 1 805 324415 174210855
-167	8368982 12716 66478 715039 10.113 47.238 638 2 8 1352 3218
-168	8381698 13996 66515 715168 10.117 47.242 586 0.004 0.996 8.8079999999998 2.6376
-169	8395694 11688 66530 715205 10.118 47.243 586 0 1 50 50
-170	8407382 12721 66530 715205 10.118 47.243 638 0 1 52 52
-171	8420103 6977 66535 715077 10.119 47.239 332 77 711 30131 3466953
-172	8427080 6620 66542 715084 10.119 47.239 332 7 7 2324 16268
-173	8433700 16097 66573 715191 10.123 47.243 672 0.004 0.004 2.688 0.010752
-174	8449797 14133 66575 715357 10.123 47.25 684 69 711 60720 6543732
-175	8463930 15435 66575 715357 10.123 47.25 749 79 79 59171 4674509
-176	8479365 15435 66576 715358 10.123 47.25 749 79 79 59171 4674509
-177	8494800 15435 66576 715358 10.123 47.25 749 78 78 58422 4556916
-178	8510235 15435 66579 715361 10.123 47.25 749 58 58 43442 2519636
-179	8525670 16076 66579 715361 10.123 47.25 749 1 749 280875 140343875
-180	8541746 994 73352 577341 10.819 40.917 50 0 1 2 2
-181	8542740 39 82148 328147 11.715 28.617 2 0 0 0 0
-182	8542779 19398 90818 714971 12.6 47.23618775722 694 0 3 1732 4502
-183	8562177 19 90818 90818 12.6 12.6 1 180 180 180 32400
-184	8562196 17 90818 90818 12.6 12.6 1 1 1 1 1
-185	8562213 93721 90818 716576 12.6 47.317143902358 3267 0 3 5495 13217
-186	8655934 187442 90818 716576 12.6 47.317143902358 6534 0 0 0 0
-187	8843376 187442 90818 716576 12.6 47.317143902358 6534 0 0 0 0
-188	9030818 187442 90818 716576 12.6 47.317143902358 6534 0 0 0 0
-189	9218260 226170 90818 716576 12.6 47.317143902358 7918 0 2 1384 2768
-190	9444430 187442 90818 716576 12.6 47.317143902358 6534 0 0 0 0
-191	9631872 99370 91019 716353 12.615 47.305 4955 0 715 106334 11521584
-192	9731242 20492 91040 715256 12.618 47.246 990 0 555 58573 5628517
-193	9751734 14356 91042 715184 12.618 47.243 683 60 555 58573 5628517
-194	9766090 15084 91042 715184 12.618 47.243 719 79 79 56801 4487279
-195	9781174 15084 91043 715185 12.618 47.243 719 79 79 56801 4487279
-196	9796258 15084 91043 715185 12.618 47.243 719 78 78 56082 4374396
-197	9811342 15084 91049 715188 12.618 47.243 719 58 58 41702 2418716
-198	9826426 15695 91049 715188 12.618 47.243 719 1 719 258840 124156920
-199	9842121 39744 91186 716577 12.627041787696 47.317143902358 1287 132 132 169884 22424688
-200	9881865 39744 91186 716577 12.627041787696 47.317143902358 1287 132 132 169884 22424688
-201	9921609 10028 92470 714929 12.73596375722 47.23596375722 346 58 58 20068 1163944
-202	9931637 10374 92475 714934 12.73596375722 47.23596375722 346 132 132 45672 6028704
-203	9942011 10028 92476 714935 12.73596375722 47.23596375722 346 78 78 26988 2105064
-204	9952039 10028 92476 714935 12.73596375722 47.23596375722 346 79 79 27334 2159386
-205	9962067 10028 92477 714936 12.73596375722 47.23596375722 346 79 79 27334 2159386
-206	9972095 16491 92479 715260 12.73596375722 47.246 653 69 792 55282 5618590
-207	9988586 10374 92482 714941 12.73596375722 47.23596375722 346 132 132 45672 6028704
-208	9998960 38728 92483 714971 12.73596375722 47.23618775722 1384 0 2 1384 2076
-209	10037688 57657 92488 715265 12.736 47.246 2887 0 794 29752 3574604
-210	10095345 11605 93452 715246 12.81 47.245 595 2 9 1404 4166
-211	10106950 11464 93519 715370 12.815 47.25 588 0 1 7 7
-212	10118414 11602 93519 715370 12.815 47.25 595 0 1 7 7
-213	10130016 14109 94815 715325 12.918 47.249 588 0.004 0.508 3.68 0.40057600000001
-214	10144125 138 94836 247273 12.919 23.719 7 0 0 0 0
-215	10144263 6463 94843 715258 12.92 47.246 307 69 792 27948 3459204
-216	10150726 6136 94851 715266 12.92 47.246 307 7 7 2149 15043
-217	10156862 17942 94894 715355 12.924 47.25 778 0.004 0.004 3.112 0.012448
-218	10174804 80 108707 433880 13.949 34.244 4 0 0 0 0
-219	10174884 15812 190031 716575 20.1 47.317143515515 546 0 3 1362 3540
-220	10190696 20 190031 190031 20.1 20.1 1 180 180 180 32400
-221	10190716 18 190031 190031 20.1 20.1 1 1 1 1 1
-222	10190734 81448 190031 716575 20.1 47.317143515515 2817 0 3 4817 11633
-223	10272182 162896 190031 716575 20.1 47.317143515515 5634 0 0 0 0
-224	10435078 162896 190031 716575 20.1 47.317143515515 5634 0 0 0 0
-225	10597974 162896 190031 716575 20.1 47.317143515515 5634 0 0 0 0
-226	10760870 194448 190031 716575 20.1 47.317143515515 6722 0 2 1088 2176
-227	10955318 162896 190031 716575 20.1 47.317143515515 5634 0 0 0 0
-228	11118214 35099 190428 716058 20.127042156028 47.293633382459 1136 132 132 149952 19793664
-229	11153313 35099 190428 716058 20.127042156028 47.293633382459 1136 132 132 149952 19793664
-230	11188412 80167 190450 716754 20.128 47.326 3981 0 555 94064 9100412
-231	11268579 13351 190916 715338 20.15 47.25 655 0 251 34180 2886932
-232	11281930 8551 190918 715340 20.15 47.25 415 81 251 34180 2886932
-233	11290481 8690 190918 715340 20.15 47.25 422 79 79 33338 2633702
-234	11299171 8690 190919 715341 20.15 47.25 422 79 79 33338 2633702
-235	11307861 8690 190919 715341 20.15 47.25 422 78 78 32916 2567448
-236	11316551 8690 190922 715344 20.15 47.25 422 58 58 24476 1419608
-237	11325241 9004 190922 715344 20.15 47.25 422 1 422 89253 25139595
-238	11334245 8160 191666 716538 20.216919515515 47.316919515515 272 58 58 15776 915008
-239	11342405 8432 191671 716543 20.216919515515 47.316919515515 272 132 132 35904 4739328
-240	11350837 8160 191672 716544 20.216919515515 47.316919515515 272 78 78 21216 1654848
-241	11358997 8160 191672 716544 20.216919515515 47.316919515515 272 79 79 21488 1697552
-242	11367157 8160 191673 716545 20.216919515515 47.316919515515 272 79 79 21488 1697552
-243	11375317 13216 191675 716547 20.216919515515 47.316919515515 512 53 555 43377 4282619
-244	11388533 8432 191678 716550 20.216919515515 47.316919515515 272 132 132 35904 4739328
-245	11396965 31552 191679 716575 20.216919515515 47.317143515515 1088 0 2 1088 1632
-246	11428517 44833 191684 716747 20.217 47.326 2229 0 557 23277 2675399
-247	11473350 9078 193248 716748 20.311 47.326 454 2 8 976 2372
-248	11482428 8859 193332 716752 20.316 47.326 443 0 1 9 9
-249	11491287 9058 193332 716752 20.316 47.326 453 0 1 10 10
-250	11500345 10419 193504 716730 20.323 47.325 443 0.004 0.508 2.828 0.34731200000001
-251	11510764 179 193533 489840 20.324 36.939 9 0 1 1 1
-252	11510943 5056 193540 714647 20.325 47.227 240 53 555 21889 2585067
-253	11515999 4800 193549 714657 20.325 47.227 240 7 7 1680 11760
-254	11520799 11853 195192 714820 20.421 47.231 494 0.004 0.004 1.976 0.0079040000000001
-255	11532652 20 208374 208374 21.227 21.227 1 0 0 0 0
-256	11532672 11404 308562 715967 27.6 47.291986208287 394 0 3 982 2552
-257	11544076 20 308562 308562 27.6 27.6 1 180 180 180 32400
-258	11544096 18 308562 308562 27.6 27.6 1 1 1 1 1
-259	11544114 64084 308562 716591 27.6 47.317144093053 2217 0 3 3845 9317
-260	11608198 128168 308562 716591 27.6 47.317144093053 4434 0 0 0 0
-261	11736366 128168 308562 716591 27.6 47.317144093053 4434 0 0 0 0
-262	11864534 128168 308562 716591 27.6 47.317144093053 4434 0 0 0 0
-263	11992702 150904 308562 716591 27.6 47.317144093053 5218 0 2 784 1568
-264	12143606 128168 308562 716591 27.6 47.317144093053 4434 0 0 0 0
-265	12271774 50723 308796 716388 27.613 47.306 2522 0 557 75642 7758334
-266	12322497 28173 308907 716592 27.617143760817 47.317144093053 912 132 132 120384 15890688
-267	12350670 28173 308907 716592 27.617143760817 47.317144093053 912 132 132 120384 15890688
-268	12378843 10655 309654 716404 27.65 47.308 519 0 555 28547 3096795
-269	12389498 6736 309656 716406 27.65 47.308 323 60 555 28547 3096795
-270	12396234 7352 309656 716406 27.65 47.308 353 79 79 27887 2203073
-271	12403586 7352 309657 716407 27.65 47.308 353 79 79 27887 2203073
-272	12410938 7352 309657 716407 27.65 47.308 353 78 78 27534 2147652
-273	12418290 7352 309660 716410 27.65 47.308 353 58 58 20474 1187492
-274	12425642 7597 309660 716410 27.65 47.308 353 1 353 62481 14724689
-275	12433239 5880 312113 715946 27.791762208287 47.291762208287 196 58 58 11368 659344
-276	12439119 6076 312118 715951 27.791762208287 47.291762208287 196 132 132 25872 3415104
-277	12445195 5880 312119 715952 27.791762208287 47.291762208287 196 78 78 15288 1192464
-278	12451075 5880 312119 715952 27.791762208287 47.291762208287 196 79 79 15484 1223236
-279	12456955 5880 312120 715953 27.791762208287 47.291762208287 196 79 79 15484 1223236
-280	12462835 9995 312122 716251 27.791762208287 47.302 392 79 81 31360 2509192
-281	12472830 6076 312125 715958 27.791762208287 47.291762208287 196 132 132 25872 3415104
-282	12478906 22736 312126 715967 27.791762208287 47.291986208287 784 0 2 784 1176
-283	12501642 20755 312168 716260 27.792 47.302 1028 0 83 17136 1351980
-284	12522397 8684 312285 716235 27.796 47.301 434 2 10 1044 3100
-285	12531081 8977 312369 716337 27.8 47.305 392 0.004 0.028 2.032 0.016
-286	12540058 7840 312408 716386 27.801 47.306 392 0 1 41 41
-287	12547898 8679 312408 716386 27.801 47.306 434 0 1 42 42
-288	12556577 4115 312417 716249 27.802 47.302 196 81 81 15876 1285956
-289	12560692 3919 312432 716261 27.802 47.302 196 7 7 1372 9604
-290	12564611 6936 312511 716358 27.806 47.306 289 0.004 0.004 1.156 0.004624
-291	12571547 820 314874 683743 27.922 45.814 41 0 1 1 1
-292	12572367 19 315141 315141 27.93 27.93 1 0 0 0 0
-293	12572386 7054 449398 716051 35.1 47.293632234068 244 0 3 607 1577
-294	12579440 20 449398 449398 35.1 35.1 1 180 180 180 32400
-295	12579460 18 449398 449398 35.1 35.1 1 1 1 1 1
-296	12579478 42394 449398 716596 35.1 47.31714466517 1467 0 3 2570 6242
-297	12621872 84788 449398 716596 35.1 47.31714466517 2934 0 0 0 0
-298	12706660 84788 449398 716596 35.1 47.31714466517 2934 0 0 0 0
-299	12791448 84788 449398 716596 35.1 47.31714466517 2934 0 0 0 0
-300	12876236 98824 449398 716596 35.1 47.31714466517 3418 0 2 484 968
-301	12975060 84788 449398 716596 35.1 47.31714466517 2934 0 0 0 0
-302	13059848 41161 449500 716423 35.103 47.308 2034 0 557 50764 4502774
-303	13101009 4988 449530 716358 35.106 47.306 242 0 555 12464 1272828
-304	13105997 3109 449532 716360 35.106 47.306 148 79 555 12464 1272828
-305	13109106 3234 449532 716360 35.106 47.306 154 79 79 12166 961114
-306	13112340 3234 449533 716361 35.106 47.306 154 79 79 12166 961114
-307	13115574 3234 449533 716361 35.106 47.306 154 78 78 12012 936936
-308	13118808 3234 449536 716364 35.106 47.306 154 58 58 8932 518056
-309	13122042 3280 449536 716364 35.106 47.306 154 1 154 11935 1229305
-310	13125322 18903 449752 716597 35.117144284374 47.31714466517 612 132 132 80784 10663488
-311	13144225 18903 449752 716597 35.117144284374 47.31714466517 612 132 132 80784 10663488
-312	13163128 3630 453350 716030 35.293408234068 47.293408234068 121 58 58 7018 407044
-313	13166758 3751 453355 716035 35.293408234068 47.293408234068 121 132 132 15972 2108304
-314	13170509 3630 453356 716036 35.293408234068 47.293408234068 121 78 78 9438 736164
-315	13174139 3630 453356 716036 35.293408234068 47.293408234068 121 79 79 9559 755161
-316	13177769 3630 453357 716037 35.293408234068 47.293408234068 121 79 79 9559 755161
-317	13181399 5611 453359 716310 35.293408234068 47.304 215 79 553 19306 2394590
-318	13187010 3751 453362 716042 35.293408234068 47.293408234068 121 132 132 15972 2108304
-319	13190761 14036 453363 716051 35.293408234068 47.293632234068 484 0 2 484 726
-320	13204797 22878 453444 716318 35.294 47.304 1139 0 555 10339 1679601
-321	13227675 4040 453538 716278 35.298 47.303 202 2 4 408 832
-322	13231715 4188 453643 716395 35.302 47.307 175 0.004 1.324 4.308 3.038704
-323	13235903 3500 453677 716421 35.303 47.308 175 0 1 26 26
-324	13239403 4040 453677 716421 35.303 47.308 202 0 1 27 27
-325	13243443 1981 453706 716308 35.304 47.304 94 81 553 9747 1639429
-326	13245424 1879 453721 716319 35.304 47.304 94 7 7 658 4606
-327	13247303 1944 453833 716404 35.308 47.308 81 0.004 0.004 0.324 0.001296
-328	13249247 520 486974 707982 36.821 46.924 26 0 1 1 1
-329	13249767 20 504862 504862 37.632 37.632 1 0 0 0 0
+0	14102 8 0 0 0 0 1 0 0 0 0
+1	14110 8 0 0 0 0 1 0 0 0 0
+2	14118 8 0 0 0 0 1 0 0 0 0
+3	14126 155 0 93 0 0.0000004924 9 0 1 4 4
+4	14281 8 0 0 0 0 1 0 0 0 0
+5	14289 8 0 0 0 0 1 0 0 0 0
+6	14297 8 0 0 0 0 1 0 0 0 0
+7	14305 155 0 92 0 0.0000004924 9 0 1 4 4
+8	14460 8 0 0 0 0 1 0 0 0 0
+9	14468 8 0 0 0 0 1 0 0 0 0
+10	14476 9 0 0 0 0 1 0 0 0 0
+11	14485 9 0 0 0 0 1 0 0 0 0
+12	14494 9 0 0 0 0 1 0 0 0 0
+13	14503 9 0 0 0 0 1 0 0 0 0
+14	14512 9 0 0 0 0 1 0 0 0 0
+15	14521 9 0 0 0 0 1 0 0 0 0
+16	14530 9 0 0 0 0 1 0 0 0 0
+17	14539 9 0 0 0 0 1 0 0 0 0
+18	14548 9 0 0 0 0 1 0 0 0 0
+19	14557 9 0 0 0 0 1 0 0 0 0
+20	14566 10 25 25 0 0 1 0 0 0 0
+21	14576 10 30 30 0 0 1 0 0 0 0
+22	14586 10 34 34 0 0 1 0 0 0 0
+23	14596 10 34 34 0 0 1 0 0 0 0
+24	14606 10 35 35 0 0 1 0 0 0 0
+25	14616 10 35 35 0 0 1 0 0 0 0
+26	14626 78 42 89 0 0.000000458 4 36 164 400 48704
+27	14704 72 42 89 0 0.000000458 4 0 0 0 0
+28	14776 78 43 88 0 0.000000458 4 36 164 400 48704
+29	14854 72 43 88 0 0.000000458 4 0 0 0 0
+30	14926 78 44 91 0 0.000000458 4 36 164 400 48704
+31	15004 78 44 91 0 0.000000458 4 43 171 428 54500
+32	15082 78 45 90 0 0.000000458 4 36 164 400 48704
+33	15160 78 45 90 0 0.000000458 4 43 171 428 54500
+34	15238 89 50 95 0.0000001228 0.0000005424 4 43 171 428 54500
+35	15327 89 50 95 0.0000001228 0.0000005424 4 36 164 400 48704
+36	15416 89 51 94 0.0000001228 0.0000005424 4 43 171 428 54500
+37	15505 89 51 94 0.0000001228 0.0000005424 4 36 164 400 48704
+38	15594 21 54 54 0.0000001228 0.0000001228 1 0 0 0 0
+39	15615 25 54 54 0.0000001228 0.0000001228 1 65535 65535 65535 4294836225
+40	15640 21 54 54 0.0000001228 0.0000001228 1 0 0 0 0
+41	15661 21 54 54 0.0000001228 0.0000001228 1 0 0 0 0
+42	15682 21 54 54 0.0000001228 0.0000001228 1 0 0 0 0
+43	15703 21 55 55 0.0000001228 0.0000001228 1 0 0 0 0
+44	15724 25 55 55 0.0000001228 0.0000001228 1 65535 65535 65535 4294836225
+45	15749 21 55 55 0.0000001228 0.0000001228 1 0 0 0 0
+46	15770 21 55 55 0.0000001228 0.0000001228 1 0 0 0 0
+47	15791 21 55 55 0.0000001228 0.0000001228 1 0 0 0 0
+48	15812 25 68 68 0.0000003096 0.0000003096 1 65535 65535 65535 4294836225
+49	15837 21 68 68 0.0000003096 0.0000003096 1 0 0 0 0
+50	15858 21 68 68 0.0000003096 0.0000003096 1 0 0 0 0
+51	15879 25 69 69 0.0000003096 0.0000003096 1 65535 65535 65535 4294836225
+52	15904 21 69 69 0.0000003096 0.0000003096 1 0 0 0 0
+53	15925 21 69 69 0.0000003096 0.0000003096 1 0 0 0 0
+54	15946 24 82 82 0.000000458 0.000000458 1 65535 65535 65535 4294836225
+55	15970 23 82 82 0.000000458 0.000000458 1 4380 4380 4380 19184400
+56	15993 25 82 82 0.000000458 0.000000458 1 0.1825 0.1825 0.1825 0.03330625
+57	16018 20 82 82 0.000000458 0.000000458 1 3 3 3 9
+58	16038 24 82 82 0.000000458 0.000000458 1 65535 65535 65535 4294836225
+59	16062 23 82 82 0.000000458 0.000000458 1 8940 8940 8940 79923600
+60	16085 25 82 82 0.000000458 0.000000458 1 0.3725 0.3725 0.3725 0.13875625
+61	16110 20 82 82 0.000000458 0.000000458 1 3 3 3 9
+62	16130 24 82 82 0.000000458 0.000000458 1 65535 65535 65535 4294836225
+63	16154 23 82 82 0.000000458 0.000000458 1 8940 8940 8940 79923600
+64	16177 25 82 82 0.000000458 0.000000458 1 0.3725 0.3725 0.3725 0.13875625
+65	16202 20 82 82 0.000000458 0.000000458 1 3 3 3 9
+66	16222 24 83 83 0.000000458 0.000000458 1 65535 65535 65535 4294836225
+67	16246 23 83 83 0.000000458 0.000000458 1 4380 4380 4380 19184400
+68	16269 25 83 83 0.000000458 0.000000458 1 0.1825 0.1825 0.1825 0.03330625
+69	16294 20 83 83 0.000000458 0.000000458 1 3 3 3 9
+70	16314 24 83 83 0.000000458 0.000000458 1 65535 65535 65535 4294836225
+71	16338 23 83 83 0.000000458 0.000000458 1 8940 8940 8940 79923600
+72	16361 25 83 83 0.000000458 0.000000458 1 0.3725 0.3725 0.3725 0.13875625
+73	16386 20 83 83 0.000000458 0.000000458 1 3 3 3 9
+74	16406 24 83 83 0.000000458 0.000000458 1 65535 65535 65535 4294836225
+75	16430 23 83 83 0.000000458 0.000000458 1 8940 8940 8940 79923600
+76	16453 25 83 83 0.000000458 0.000000458 1 0.3725 0.3725 0.3725 0.13875625
+77	16478 20 83 83 0.000000458 0.000000458 1 3 3 3 9
+78	16498 25 98 98 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
+79	16523 24 98 98 0.0000005424 0.0000005424 1 4380 4380 4380 19184400
+80	16547 26 98 98 0.0000005424 0.0000005424 1 0.1825 0.1825 0.1825 0.03330625
+81	16573 21 98 98 0.0000005424 0.0000005424 1 3 3 3 9
+82	16594 25 98 98 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
+83	16619 24 98 98 0.0000005424 0.0000005424 1 8940 8940 8940 79923600
+84	16643 26 98 98 0.0000005424 0.0000005424 1 0.3725 0.3725 0.3725 0.13875625
+85	16669 21 98 98 0.0000005424 0.0000005424 1 3 3 3 9
+86	16690 25 98 98 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
+87	16715 24 98 98 0.0000005424 0.0000005424 1 8940 8940 8940 79923600
+88	16739 26 98 98 0.0000005424 0.0000005424 1 0.3725 0.3725 0.3725 0.13875625
+89	16765 21 98 98 0.0000005424 0.0000005424 1 3 3 3 9
+90	16786 25 99 99 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
+91	16811 24 99 99 0.0000005424 0.0000005424 1 4380 4380 4380 19184400
+92	16835 26 99 99 0.0000005424 0.0000005424 1 0.1825 0.1825 0.1825 0.03330625
+93	16861 21 99 99 0.0000005424 0.0000005424 1 3 3 3 9
+94	16882 25 99 99 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
+95	16907 24 99 99 0.0000005424 0.0000005424 1 8940 8940 8940 79923600
+96	16931 26 99 99 0.0000005424 0.0000005424 1 0.3725 0.3725 0.3725 0.13875625
+97	16957 21 99 99 0.0000005424 0.0000005424 1 3 3 3 9
+98	16978 25 99 99 0.0000005424 0.0000005424 1 65535 65535 65535 4294836225
+99	17003 24 99 99 0.0000005424 0.0000005424 1 8940 8940 8940 79923600
+100	17027 27 99 99 0.0000005424 0.0000005424 1 0.3725 0.3725 0.3725 0.13875625
+101	17054 22 99 99 0.0000005424 0.0000005424 1 3 3 3 9
+102	17076 3631 102 1221 0.001 0.226 226 0 0 0 0
+103	20707 3631 102 1221 0.001 0.226 226 0 0 0 0
+104	24338 3632 103 1222 0.001 0.226 226 0 0 0 0
+105	27970 3632 103 1222 0.001 0.226 226 0 0 0 0
+106	31602 28 500 500 0.1 0.1 2 0 2 2 4
+107	31630 16 500 500 0.1 0.1 1 180 180 180 32400
+108	31646 14 500 500 0.1 0.1 1 1 1 1 1
+109	31660 14 500 500 0.1 0.1 1 1 1 1 1
+110	31674 28 500 500 0.1 0.1 2 0 0 0 0
+111	31702 28 500 500 0.1 0.1 2 0 0 0 0
+112	31730 28 500 500 0.1 0.1 2 0 0 0 0
+113	31758 28 500 500 0.1 0.1 2 0 0 0 0
+114	31786 28 500 500 0.1 0.1 2 0 0 0 0
+115	31814 338 521 1203 0.102 0.222 21 0 0 0 0
 
