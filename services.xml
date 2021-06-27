@@ -3,7 +3,10 @@
     <service type="HybridService">
         <listener port="8001" />
     </service>
-    
+    <service type="artery.application.CaService">
+		<listener port="2001" />
+	</service>
+     
     <service type="ItsG5App">
         <listener port="8003" />
     </service>

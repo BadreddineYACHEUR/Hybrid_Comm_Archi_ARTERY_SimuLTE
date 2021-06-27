@@ -22,9 +22,10 @@ class HybridService : public artery::ItsG5Service
 		void finish() override;
 		void handleMessage(omnetpp::cMessage*) override;
 
-		// Gates
+		//Signals
 
-		int serviceOut;
+		omnetpp::simsignal_t toMainAppSignal;
+
 
 	private:
 		std::string vehicleId;

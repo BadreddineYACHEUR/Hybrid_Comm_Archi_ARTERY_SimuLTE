@@ -13,6 +13,8 @@ using namespace vanetza;
 
 Define_Module(HybridApp)
 
+static const simsignal_t fromHybridServiceSignal = cComponent::registerSignal("toMainAppSignal");
+
 HybridApp::HybridApp()
 {
 }
@@ -20,15 +22,43 @@ HybridApp::HybridApp()
 
 void HybridApp::initialize()
 {
-	fromServiceIn = findGate("serviceOut");
 	int gateSize = par("num_apps");
-	//hybridAppIn[0] = 
+	getParentModule()->subscribe(fromHybridServiceSignal, this);
+	//hybridAppIn[gateSize] = gate("hybridAppIn");
 	//hybridAppOut[0]
 	
 }
 
 void HybridApp::handleMessage(omnetpp::cMessage* msg){
 	std::cout << "Message " << msg << " arrived.\n";
+
+	delete msg;
+}
+
+void HybridApp::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObject*)
+{
+    if (sig == fromHybridServiceSignal) {
+
+    	auto sigMessage = check_and_cast<cMessage*>(obj);
+        
+        std::cout << "message from fromHybridServiceSignal received " << sigMessage << " \n";
+
+        sendToSubApps(sigMessage);
+        delete sigMessage;
+        
+    }
+    
+}
+
+void HybridApp::sendToSubApps (omnetpp::cMessage* msg){
+
+	Enter_Method("HybridApp sendToSubApps");
+
+	std::cout << "sending to Sub APPS \n" ;
+
+	send(msg->dup(), "hybridAppOut", 0);
+	send(msg->dup(), "hybridAppOut", 1);
+
 }
 
 void HybridApp::finish()

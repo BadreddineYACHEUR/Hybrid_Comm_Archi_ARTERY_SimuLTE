@@ -13,7 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-import artery.application.ItsG5Service;
+
 
 simple HybridApp
 {
@@ -33,7 +33,7 @@ simple HybridApp
 
 
     gates:
-    	input fromServiceIn;
+    
         input hybridAppIn[];
         output hybridAppOut[];
     

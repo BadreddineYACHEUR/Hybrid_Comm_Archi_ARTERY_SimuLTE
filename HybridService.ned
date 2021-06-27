@@ -24,36 +24,38 @@ module HybridService like ItsG5Service
     parameters:
         @class(HybridService);
         // @signal[PlatooningUnicastReceived](type=cObject);
-
+        
         //string protocol_type = "BaseProtocol";
 
         // duplication or agregation
 
         string communication_mode;
-        
+
 
         int num_sub_apps = default(2);
 
         @display("i=block/app2;bgb=214.88,131.92");
 
-    gates:
-        input serviceOut;
+        //Signals
+
+        @signal[toMainAppSignal];
 
     submodules:
 
         mode: <communication_mode> like BaseCommMode {
-            @display("p=104.72,27.2");
+            @display("p=166.725,21.6");
         }
 
         mainApp: HybridApp {
 
+            @display("p=44.550003,89.775");
             gates:
                 hybridAppIn[num_sub_apps];
                 hybridAppOut[num_sub_apps];
         }
-        
+
         subApp[num_sub_apps]: SubApplication {
-            @display("p=34.68,27.2, row, 50");
+            @display("p=44.550003,21.6,row,50");
         }
 
         //prot: <protocol_type> like BaseProtocol {
@@ -64,12 +66,9 @@ module HybridService like ItsG5Service
     connections allowunconnected:
 
 
-        for i=0..(num_sub_apps - 1){
-
+        for i=0..(num_sub_apps - 1) {
             mainApp.hybridAppOut[i] --> subApp[i].subApplicationIn;
             subApp[i].subApplicationOut --> mainApp.hybridAppIn[i];
         }
-
-        serviceOut --> mainApp.fromServiceIn;
 
 }

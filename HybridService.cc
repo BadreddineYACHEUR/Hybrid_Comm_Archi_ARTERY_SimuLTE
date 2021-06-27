@@ -29,7 +29,8 @@ void HybridService::initialize()
 	mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();	
 	vehicleId = mVehicleController->getVehicleId();
 
-	serviceOut = findGate("serviceOut");
+	toMainAppSignal = cComponent::registerSignal("toMainAppSignal");
+
 }
 
 
@@ -66,8 +67,9 @@ void HybridService::handleMessage(cMessage* msg)
 void HybridService::trigger()
 {
 	Enter_Method("HybridService trigger");
-	cMessage *msg = new cMessage("Test Gate COmmunication");
-	sendDirect(msg, serviceOut);
+	//cMessage *msg = new cMessage("Ping Test Gate Communication");
+	//std::cout << "sending from HybridService to main App" << "\n";
+	//emit(toMainAppSignal, msg);
 }
 
 void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObject*, cObject*)
@@ -77,7 +79,6 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 void HybridService::sendToMainApp(cMessage* msg)
 {
 	
-
 }
 
 

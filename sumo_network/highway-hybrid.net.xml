@@ -42,12 +42,12 @@
     <location netOffset="0.00,0.00" convBoundary="-2968.74,-1064.47,339.90,-1064.47" origBoundary="-10000000000.00,-10000000000.00,10000000000.00,10000000000.00" projParameter="!"/>
 
     <edge id="-edge1" from="jun1" to="jun2" priority="-1">
-        <lane id="-edge1_0" index="0" speed="13.89" length="3308.64" shape="-2968.74,-1069.27 339.90,-1069.27"/>
-        <lane id="-edge1_1" index="1" speed="13.89" length="3308.64" shape="-2968.74,-1066.07 339.90,-1066.07"/>
+        <lane id="-edge1_0" index="0" speed="13.89" length="3000" shape="-2968.74,-1069.27 339.90,-1069.27"/>
+        <lane id="-edge1_1" index="1" speed="13.89" length="3000" shape="-2968.74,-1066.07 339.90,-1066.07"/>
     </edge>
     <edge id="edge1" from="jun2" to="jun1" priority="-1">
-        <lane id="edge1_0" index="0" speed="13.89" length="3308.64" shape="339.90,-1059.67 -2968.74,-1059.67"/>
-        <lane id="edge1_1" index="1" speed="13.89" length="3308.64" shape="339.90,-1062.87 -2968.74,-1062.87"/>
+        <lane id="edge1_0" index="0" speed="13.89" length="3000" shape="339.90,-1059.67 -2968.74,-1059.67"/>
+        <lane id="edge1_1" index="1" speed="13.89" length="3000" shape="339.90,-1062.87 -2968.74,-1062.87"/>
     </edge>
 
     <junction id="jun1" type="dead_end" x="-2968.74" y="-1064.47" incLanes="edge1_0 edge1_1" intLanes="" shape="-2968.74,-1064.47 -2968.74,-1058.07 -2968.74,-1064.47"/>

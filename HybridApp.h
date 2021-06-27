@@ -18,9 +18,15 @@ class HybridApp : public cSimpleModule, public cListener
 		void initialize();
 		void finish();
 		void handleMessage(omnetpp::cMessage*) override;
+		void sendToSubApps (omnetpp::cMessage* msg);
+
+		void receiveSignal (cComponent*, simsignal_t, cObject* /*const char**/, cObject*) override;
 
 		//Gates
-		int fromServiceIn, hybridAppIn[2], hybridAppOut[2];
+
+		//cGAte* hybridAppIn[];
+		//cGAte* hybridAppOut[];
+
 	private:
 
 };
