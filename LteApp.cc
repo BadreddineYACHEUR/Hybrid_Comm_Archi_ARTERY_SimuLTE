@@ -49,62 +49,33 @@ void LteApp::initialize(int stage)
 
     vehicleController = artery::notNullPtr(mw->getFacilities().get_mutable_ptr<traci::VehicleController>());
 
-    // application logic
-    
-    messageReceived = 0;
-    WATCH(messageReceived);
+    //WATCH(messageReceived);
 
     lteToSubAppSignal = cComponent::registerSignal("lteToSubAppSignal");
 
-    //omnetpp::cMessage trigger = new omnetpp::cMessage("send message");
-    //scheduleAt(simTime() + 1 trigger);
-
 }
 
-void LteApp::finish()
-{
-    socket.close();
-    recordScalar("number of ITS-G5 message received", messageReceived);
-}
 
 void LteApp::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObject*)
 {
-    std::cout << "im receive signal method \n";
-    if (sig == lteSignal){
+    if (sig == fromSubAppSignalbis){
+
         auto sigMessage = check_and_cast<PlatooningMessage*>(obj);
-        EV << "ITS-G5 signal received " << "// id = " << sigMessage->getVehicleId() << "\n";
-        ++messageReceived;
-              
-        sendV2XMessage(sigMessage);
-
-        delete sigMessage;
-
-    }else if (sig == fromSubAppSignalbis){
-
-        auto sigMessage = check_and_cast<cMessage*>(obj);
         
-        std::cout << "message from fromSubAppSignal in LTE received " << sigMessage << " \n";
+        //std::cout << "message fromSubAppSignal in LTE received " << sigMessage->getMessageId() << " \n";
 
-        cMessage *msg = new cMessage("Pong Test Gate Communication");
-
-        emit(lteToSubAppSignal, msg);
-
-        //Send message via Request
-
+        //Send message to Network
+        sendV2XMessage(sigMessage);
         delete sigMessage;
+
     }
 }
 
 void LteApp::handleMessage(cMessage* msg)
 {
-    /*if (msg->isSelfMessage()) {
-        auto platooningLteMessage = new PlatooningMessage();
-        platooningLteMessage->setEdgeName("dadi");
-        sendV2XMessage(platooningLteMessage);
-        //vehicleController->setSpeedFactor(1.0);
-    } else */
     if (msg->getKind() == inet::UDP_I_DATA) {
-        processV2XMessage(*check_and_cast<PlatooningMessage*>(msg));
+        
+        processV2XMessage(check_and_cast<PlatooningMessage*>(msg));
         delete msg;
     } else {
         throw cRuntimeError("Unrecognized message (%s)%s", msg->getClassName(), msg->getName());
@@ -118,7 +89,16 @@ void LteApp::sendV2XMessage(PlatooningMessage* packet)
     socket.sendTo(packet->dup(), mcastAddress, par("mcastPort"));
 }
 
-void LteApp::processV2XMessage(PlatooningMessage& packet)
+void LteApp::processV2XMessage(PlatooningMessage* packet)
 {
+    //std::cout << "message in LTE received " << packet->getMessageId() << " \n";
+    packet->setInterface(1);
+    emit(lteToSubAppSignal, packet->dup());
 
+    
+}
+
+void LteApp::finish()
+{
+    socket.close();
 }

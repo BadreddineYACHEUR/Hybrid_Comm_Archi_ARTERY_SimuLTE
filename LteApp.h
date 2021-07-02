@@ -23,12 +23,11 @@ protected:
 
 private:
     void sendV2XMessage(PlatooningMessage*);
-    void processV2XMessage(PlatooningMessage&);
+    void processV2XMessage(PlatooningMessage*);
 
     inet::UDPSocket socket;
     inet::L3Address mcastAddress;
     int mcastPort;
-    int messageReceived;
     traci::VehicleController* vehicleController = nullptr;
 
     omnetpp::simsignal_t lteToSubAppSignal;

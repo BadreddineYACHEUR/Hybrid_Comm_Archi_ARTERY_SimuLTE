@@ -53,13 +53,13 @@ void SubApplication::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, c
 
 	if (sig == fromItsG5Signal) {
         
-        std::cout << "message from fromItsG5Signal received " << sigMessage << " \n";
+        //std::cout << "message from fromItsG5Signal received " << sigMessage << " \n";
 
         sendToMainApp(sigMessage);
         
     }else if (sig == fromLteSignal){
         
-        std::cout << "message from fromLteSignal received " << sigMessage << " \n";
+        //std::cout << "message from fromLteSignal received " << sigMessage << " \n";
 
         sendToMainApp(sigMessage);
 
@@ -72,18 +72,19 @@ void SubApplication::handleMessage(omnetpp::cMessage* msg){
 
     if (msg->getArrivalGateId() == subApplicationIn){
 
-        std::cout << "Message from Main App --> " << msg << " Im interface:" << interfaceType << "\n";
+        //std::cout << "Message from Main App --> " << msg << " Im interface:" << interfaceType << "\n";
 
         if (interfaceType.compare("ItsG5") == 0){
-        	std::cout << " Sending to ItsG5 \n";
+        	//std::cout << " Sending to ItsG5 \n";
 
-        	emit(toItsG5Signal, msg);
+        	emit(toItsG5Signal, msg->dup());
 
         }else if (interfaceType.compare("LTEMode3") == 0){
 
-        	std::cout << " Sending to LTEMode3 \n";
-        	emit(toLteSignal, msg);
+        	//std::cout << " Sending to LTEMode3 \n";
+        	emit(toLteSignal, msg->dup());
         }
+        delete msg;
     }
         
 
@@ -93,7 +94,8 @@ void SubApplication::sendToMainApp (omnetpp::cMessage* msg){
 
 	Enter_Method("HybridApp sendToMainApp");
 
-	std::cout << "sending to Main App from sub app : " << interfaceType << " \n" ;
+	//std::cout << "sending to Main App from sub app : " << interfaceType << " \n" ;
 
 	send(msg->dup(), "subApplicationOut");
+
 }

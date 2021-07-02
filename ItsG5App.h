@@ -30,8 +30,6 @@ class ItsG5App : public artery::ItsG5Service
         double squarDistance(double xPosV1, double xPosV2, double yPosV1, double yPosV2);
         void writePRInfo(std::string fileName, std::string column1, std::string column2);
 
-        omnetpp::simsignal_t LteSignal;
-
         omnetpp::simsignal_t itsG5ToSubAppSignal;
         std::string csvFile;
         int messageId = 0;

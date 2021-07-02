@@ -31,6 +31,8 @@ simple HybridApp
         @class(HybridApp);
         @display("i=block/app2;bgb=214.88,131.92");
 
+        @signal[toHybridServiceSignal];
+
 
     gates:
     

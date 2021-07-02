@@ -51,13 +51,13 @@
 
     <vType id="free" length="2" maxSpeed="30" minGap="0.5" speedFactor="0.5" lcKeepRight="10"/>
 
-    <flow id="free_flow_0" type="free" begin="0.00" period="0.85" departSpeed="9.77">
+    <!-- <flow id="free_flow_0" type="free" begin="0.00" period="0.85" departSpeed="9.77">
         <route edges="edge1" color="cyan"/>
     </flow>
 
     <flow id="free_flow_1" type="free" begin="0.00" color="blue" period="0.85" departSpeed="9.77">
         <route edges="-edge1" color="cyan"/>
-    </flow>
+    </flow> -->
 
 
     <vehicle id="platoon_leader" depart="15.00" departSpeed="10" color="yellow" type="platoonLeader">

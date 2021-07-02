@@ -14,6 +14,8 @@ packet PlatooningMessage
 					 // 1 = Join request
 					 // 2 = Join response
 
+	int interface;
+
 	//leader response
 	bool accepted = false;
 	string joinerId;

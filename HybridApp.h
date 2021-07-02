@@ -22,6 +22,10 @@ class HybridApp : public cSimpleModule, public cListener
 
 		void receiveSignal (cComponent*, simsignal_t, cObject* /*const char**/, cObject*) override;
 
+		//Signals
+
+		omnetpp::simsignal_t toHybridServiceSignal;
+
 		//Gates
 
 		//cGAte* hybridAppIn[];
