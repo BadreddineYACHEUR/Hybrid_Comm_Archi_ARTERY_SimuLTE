@@ -1,8 +1,6 @@
 #include "LteApp.h"
-#include "hybrid_msgs/HybridServicesMessagesLTE_m.h"
 #include "hybrid_msgs/HybridServicesMessages_m.h"
 #include "artery/application/Middleware.h"
-#include "artery/application/StoryboardSignal.h"
 #include "artery/traci/VehicleController.h"
 #include "artery/utility/PointerCheck.h"
 #include <inet/common/ModuleAccess.h>
@@ -14,6 +12,9 @@ using namespace omnetpp;
 Define_Module(LteApp)
 
 static const simsignal_t lteSignal = cComponent::registerSignal("LteSignal");
+
+static const simsignal_t fromSubAppSignalbis = cComponent::registerSignal("toLteSignal");
+
 
 
 int LteApp::numInitStages() const
@@ -32,8 +33,7 @@ void LteApp::initialize(int stage)
     mcastPort = par("mcastPort");
     socket.setOutputGate(gate("udpOut"));
     socket.bind(mcastPort);
-    getParentModule()->subscribe(lteSignal, this);
-
+    
     // LTE multicast support
     inet::IInterfaceTable *ift = inet::getModuleFromPar<inet::IInterfaceTable>(par("interfaceTableModule"), this);
     inet::InterfaceEntry *ie = ift->getInterfaceByName("wlan");
@@ -44,50 +44,38 @@ void LteApp::initialize(int stage)
 
     // application's supporting code
     auto mw = inet::getModuleFromPar<artery::Middleware>(par("middlewareModule"), this);
+    getParentModule()->subscribe(lteSignal, this);
+    getParentModule()->subscribe(fromSubAppSignalbis, this);
+
     vehicleController = artery::notNullPtr(mw->getFacilities().get_mutable_ptr<traci::VehicleController>());
 
-    // application logic
-    
-    messageReceived = 0;
-    WATCH(messageReceived);
+    //WATCH(messageReceived);
 
-    //omnetpp::cMessage trigger = new omnetpp::cMessage("send message");
-    //scheduleAt(simTime() + 1 trigger);
+    lteToSubAppSignal = cComponent::registerSignal("lteToSubAppSignal");
 
 }
 
-void LteApp::finish()
-{
-    socket.close();
-    recordScalar("number of ITS-G5 message received", messageReceived);
-}
 
 void LteApp::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObject*)
 {
-    if (sig == lteSignal) {
+    if (sig == fromSubAppSignalbis){
+
         auto sigMessage = check_and_cast<PlatooningMessage*>(obj);
-        EV << "ITS-G5 signal received " << "// id = " << sigMessage->getVehicleId() << "\n";
-        ++messageReceived;
         
-        /*auto platooningLteMessage = new PlatooningMessage();
-        
-        platooningLteMessage->setEdgeName(sigMessage->getEdgeName());
-        platooningLteMessage->setVehicleId(sigMessage->getVehicleId());
-        platooningLteMessage->setLaneIndex(sigMessage->getLaneIndex());
-        platooningLteMessage->setSpeed(sigMessage->getSpeed());
-        platooningLteMessage->setTime(sigMessage->getTime());  */  
-        
+        //std::cout << "message fromSubAppSignal in LTE received " << sigMessage->getMessageId() << " \n";
+
+        //Send message to Network
         sendV2XMessage(sigMessage);
+        delete sigMessage;
+
     }
 }
 
 void LteApp::handleMessage(cMessage* msg)
 {
-    /*if (msg->isSelfMessage()) {
-        //vehicleController->setSpeedFactor(1.0);
-    } else */
     if (msg->getKind() == inet::UDP_I_DATA) {
-        processV2XMessage(*check_and_cast<PlatooningMessage*>(msg));
+        
+        processV2XMessage(check_and_cast<PlatooningMessage*>(msg));
         delete msg;
     } else {
         throw cRuntimeError("Unrecognized message (%s)%s", msg->getClassName(), msg->getName());
@@ -98,10 +86,19 @@ void LteApp::sendV2XMessage(PlatooningMessage* packet)
 {
     Enter_Method_Silent();
     //maybe add some attributs
-    socket.sendTo(packet, mcastAddress, par("mcastPort"));
+    socket.sendTo(packet->dup(), mcastAddress, par("mcastPort"));
 }
 
-void LteApp::processV2XMessage(PlatooningMessage& packet)
+void LteApp::processV2XMessage(PlatooningMessage* packet)
 {
-    EV << "Message Received from LTE " << "\n";
+    //std::cout << "message in LTE received " << packet->getMessageId() << " \n";
+    packet->setInterface(1);
+    emit(lteToSubAppSignal, packet->dup());
+
+    
+}
+
+void LteApp::finish()
+{
+    socket.close();
 }

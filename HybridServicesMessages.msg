@@ -1,8 +1,51 @@
 packet PlatooningMessage
 {
-	string vehicleId;    
+
+	string messageId;
+
+	string vehicleId;
+
+	//platoon id
+	int platoonId = -1;
+	int idInPlatoon = -1;
+	
+	//message type
+	int messageType; // 0 = Simple platooning message
+					 // 1 = Join request
+					 // 2 = Join response
+
+	int interface;
+
+	//leader response
+	bool accepted = false;
+	string joinerId;
+	int platoonSize = 0;
+	int affectedId;
+
+
+    
+
     string edgeName;
     int laneIndex;
+    double positionX = 0;
+	double positionY = 0;
+
+
+    double speed;
+    simtime_t time;
+}
+
+
+packet FakeCAMMessage
+{
+	string messageId;
+
+    string vehicleId;
+
+    string edgeName;
+    int laneIndex;
+    double positionX = 0;
+	double positionY = 0;
 
     double speed;
     simtime_t time;
