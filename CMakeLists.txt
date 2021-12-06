@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 5d0e0c911c15807aadb0d9860359becf180a2627
-add_artery_feature(hybrid LteApp.cc ItsG5App.cc HybridApp.cc HybridService.cc SubApplication.cc BaseProtocol.cc DupCommMode.cc)
+add_artery_feature(hybrid LteApp.cc ItsG5App.cc HybridApp.cc HybridService.cc SubApplication.cc BaseProtocol.cc DupCommMode.cc RLAgentUtils/Network.h RLAgentUtils/Memory.h)
 generate_opp_message(HybridServicesMessages.msg TARGET hybrid DIRECTORY hybrid_msgs)
 add_opp_run(hybrid_comm DEPENDENCY artery-lte NED_FOLDERS ${CMAKE_CURRENT_SOURCE_DIR})
 

@@ -10,7 +10,18 @@
 #include <fstream>
 #include <iostream>
 #include "HybridService.h"
+
+
+#include "RLAgentUtils/Network.h"
+#include <math.h>
+#include <chrono>
+#include <string>
+#include <algorithm>
+#include <tuple>
 #include "torch/torch.h"
+#include "artery/inet/VanetRadio.h"
+// #include <lte/stack/phy/layer/LtePhyUeD2D.h>
+
 
 
 using namespace omnetpp;
@@ -21,8 +32,16 @@ Define_Module(HybridService)
 
 static const simsignal_t fromMainAppSignal = cComponent::registerSignal("toHybridServiceSignal");
 
-HybridService::HybridService()
-{
+void HybridService::init(int input_dims, int num_actions, int hidden_dims){
+        network = Net(input_dims, hidden_dims, num_actions);
+        target_network = Net(input_dims, hidden_dims, num_actions);
+        agent_memory = Memory(input_dims, mem_max); 
+        observation_space = input_dims; 
+        action_space = num_actions;
+}
+
+HybridService::HybridService():optimizer(network->parameters(), torch::optim::AdamOptions(0.0001)){
+	this->init(6, 512, 3);
 }
 
 void HybridService::initialize()
@@ -32,15 +51,14 @@ void HybridService::initialize()
 
 	mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();
     const std::string vehicle_id = mVehicleController->getVehicleId();
-    leader_speed = 10;
-	
-	std::cout << torch::relu(-1*torch::ones({2,1})) << "\n";  
-
+    leader_speed = 10;  
 
     //writePRInfo(csvFile, "Sent", "Received");
 
     platoonId = -1;
     messageId = 0;
+
+
 
     if (vehicle_id.compare(0, 14, "platoon_leader") == 0)
         {
@@ -48,7 +66,7 @@ void HybridService::initialize()
 
         	std::fstream file;
            	file.open (csvFile, std::ios::app);
-
+			   
             if (file) {
             	file << "Sent" << ", " << "Received" << "\n";
             	
@@ -87,6 +105,23 @@ void HybridService::initialize()
     // Signals 
     getParentModule()->subscribe(fromMainAppSignal, this);
     toMainAppSignal = cComponent::registerSignal("toMainAppSignal");
+
+	// Hybrid init
+
+
+	network->network_id = vehicle_id + "_Net";
+	target_network->network_id = vehicle_id + "_target_Net" ;
+
+	std::cout << network << "\n the net " << network->network_id << "\n";
+
+	std::cout << this->getParentModule() << "\n";
+	std::cout << this->getParentModule()->getParentModule() << "\n";
+	std::cout << this->getParentModule()->getParentModule()->getSubmodule("wlan", 0) << "\n";
+	
+	cModule* radio = this->getParentModule()->getParentModule()->getSubmodule("wlan", 0)->getSubmodule("radio");
+	// auto radio_LTE = check_and_cast<LtePhyUeD2D*>(this->getParentModule()->getParentModule()->getSubmodule("lteNic")->getSubmodule("phy"));
+	std::cout << this->getParentModule()->getParentModule()->getSubmodule("lteNic") << "\n";
+
     
 
 }
@@ -450,7 +485,22 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
     	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << "" << "\n";
     }
 
-	emit(toMainAppSignal, check_and_cast<PlatooningMessage*>(msg));
+	auto msg_ = check_and_cast<PlatooningMessage*>(msg);
+
+	// RL algo
+
+	bool done = false;
+
+	// Getting stat parameters
+	cModule* radio = this->getParentModule()->getParentModule()->getSubmodule("wlan", 0)->getSubmodule("radio");
+	double SNIR_ITS_G5 = (check_and_cast<artery::VanetRadio*>(radio))->minSNIR_ITS_G5; 
+	std::cout << "SNIR = " << SNIR_ITS_G5 << "\n";
+    torch::Tensor observation = torch::tensor({0.8, SNIR_ITS_G5, 0.9, 25.0, 0.99, 50.0});
+	int action = choose_action(observation);
+	
+	msg_->setSending_interface(action);
+
+	emit(toMainAppSignal, msg_);
 }
 
 
@@ -498,4 +548,82 @@ void HybridService::CACCGapControl(std::string vehicle_id, std::string pre_vehic
         std::cout << speed << "\n";
         mVehicleController->setSpeed(speed * units::si::meter_per_second);
     }
+}
+
+//	RL Agent Functions 
+
+int HybridService::choose_action(torch::Tensor state){
+    
+    if (torch::rand(1).item().toDouble() > epsilon){
+        torch::Tensor actions = network->forward(state);
+        int action = actions.argmax().item().toInt();
+        return action;
+    }else{
+        return torch::rand(3).argmax().item().toInt();
+    }
+
+}
+
+void HybridService::store_transition(torch::Tensor state, torch::Tensor new_state, int action, double reward, bool done){
+    agent_memory.store_transition(state, new_state, action, reward, done);
+}
+
+void HybridService::replace_target_network(){
+    if((learn_step_counter % replace_target_cnt) == 0){
+        torch::save(network, "model.pt");
+        torch::load(target_network, "model.pt");
+    } 
+}
+
+void HybridService::decrement_epsilon(){
+    if (epsilon > epsilon_min)
+        epsilon -= epsilon_decay;
+    else 
+        epsilon = epsilon_min;
+}
+
+
+void HybridService::learn(){
+
+    if (agent_memory.get_mem_ctr() < batch_size)
+        return ;
+    
+    if(learn_step_counter % 1000 == 0)
+        std::cout << "Agent is learning and epsilon = " << epsilon <<  "*************************************************\n";
+
+    optimizer.zero_grad();
+
+    replace_target_network();
+
+    auto sample_tuple = agent_memory.sample_memory(batch_size, observation_space);
+
+    torch::Tensor sample_states = std::get<0>(sample_tuple);
+    torch::Tensor sample_new_states = std::get<1>(sample_tuple);
+    torch::Tensor sample_actions = std::get<2>(sample_tuple);
+    torch::Tensor sample_rewards = std::get<3>(sample_tuple);
+    torch::Tensor sample_terminals = std::get<4>(sample_tuple);
+
+    // network action predection
+
+    torch::Tensor q_values = network->forward(sample_states);
+    torch::Tensor next_q_values = network->forward(sample_new_states);
+    torch::Tensor target_next_q_values = target_network->forward(sample_new_states);
+
+    sample_actions =sample_actions.to(torch::kInt64);
+
+    torch::Tensor q_value = q_values.gather(1, sample_actions.unsqueeze(1)).squeeze(1);
+    
+    torch::Tensor maximum_next_q_values_index = std::get<1>(next_q_values.max(1));
+    torch::Tensor next_q_value = target_next_q_values.gather(1, maximum_next_q_values_index.unsqueeze(1)).squeeze(1);
+    torch::Tensor expected_q_value = sample_rewards + gamma*next_q_value*(1-sample_terminals);
+    
+    torch::Tensor loss = torch::mse_loss(q_value, expected_q_value);
+
+    loss.backward();
+    optimizer.step();
+
+    learn_step_counter += 1;
+
+    decrement_epsilon();
+
 }

@@ -43,11 +43,16 @@ void HybridApp::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObjec
     if (sig == fromHybridServiceSignal) {
 
     	auto sigMessage = check_and_cast<cMessage*>(obj);
+		auto platooningMessage = check_and_cast<PlatooningMessage*>(obj);
 
         
         //std::cout << "message from fromHybridServiceSignal received " << sigMessage << " \n";
-
-        sendToSubApps(sigMessage);
+		if (platooningMessage->getSending_interface() == 0)
+			sendToITS_G5(sigMessage);
+		else if (platooningMessage->getSending_interface() == 1)
+			sendToLTE_V2X(sigMessage);
+		else 
+			sendToSubApps(sigMessage);
         delete sigMessage;
         
     }
@@ -61,6 +66,26 @@ void HybridApp::sendToSubApps (omnetpp::cMessage* msg){
 	//std::cout << "sending to Sub APPS \n" ;
 
 	send(msg->dup(), "hybridAppOut", 0);
+	send(msg->dup(), "hybridAppOut", 1);
+
+}
+
+void HybridApp::sendToITS_G5 (omnetpp::cMessage* msg){
+
+	Enter_Method("HybridApp sendToSubApps");
+
+	//std::cout << "sending to Sub APPS \n" ;
+
+	send(msg->dup(), "hybridAppOut", 0);
+
+}
+
+void HybridApp::sendToLTE_V2X (omnetpp::cMessage* msg){
+
+	Enter_Method("HybridApp sendToSubApps");
+
+	//std::cout << "sending to Sub APPS \n" ;
+
 	send(msg->dup(), "hybridAppOut", 1);
 
 }

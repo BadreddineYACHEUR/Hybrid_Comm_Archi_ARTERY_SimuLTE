@@ -71,97 +71,6 @@ void ItsG5App::trigger()
 {
     Enter_Method("ItsG5App trigger");
 
-    // btp::DataRequestB req;
-    // req.destination_port = host_cast<ItsG5App::port_type>(getPortNumber());
-    // req.gn.transport_type = geonet::TransportType::SHB;
-    // req.gn.traffic_class.tc_id(static_cast<unsigned>(dcc::Profile::DP1));
-    // req.gn.communication_profile = geonet::CommunicationProfile::ITS_G5;
-
-    // using boost::units::si::meter;
-    // using boost::units::si::meter_per_second;
-    // const std::string id = mVehicleController->getVehicleId();
-    // auto& vehicle_api = mVehicleController->getLiteAPI().vehicle();
-
-    // auto packet = new PlatooningMessage();
-    // packet->setVehicleId(id.c_str());
-    // packet->setMessageId((id + "_" + std::to_string(messageId)).c_str());
-
-    // //std::cout << "ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
-
-    // packet->setPositionX(mVehicleController->getPosition().x / meter);
-    // packet->setPositionY(mVehicleController->getPosition().y / meter);
-    // packet->setEdgeName(vehicle_api.getRoadID(id).c_str());
-    // packet->setLaneIndex(vehicle_api.getLaneIndex(id));
-    // packet->setSpeed(mVehicleController->getSpeed() / meter_per_second);
-    // packet->setTime(simTime());
-
-    
-    // if (role == JOINER)
-    // {
-    //     // the "1" message type is for join request
-    //     packet->setMessageType(1);
-
-    //     packet->setByteLength(50);
-
-        
-    //     //std::cout << "Joiner sending message ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
-
-    //     //request(req, packet);
-               
-    //     // std::fstream file;
-    //     // file.open (csvFile, std::ios::app);
-
-    //     // if (file) {
-    //     //     file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << "" << "\n";
-    //     // }
-
-    //     //messageId++;
-    // }
-    // else if ((role == FOLLOWER) || (role == LEADER))
-    // {
-    //     //if ((simTime() > 70) && (role == LEADER))
-    //       //  mVehicleController->setSpeed(1 * meter_per_second);
-
-    //     // the "0" message type is platoon beacons
-
-    //     packet->setMessageType(0);
-    //     packet->setPlatoonId(0);
-    //     packet->setIdInPlatoon(platoonId);
-    //     packet->setPlatoonSize(platoonSize);
-
-    //     packet->setByteLength(50);
-
-
-    //     //request(req, packet);
-            
-    //     // std::fstream file;
-    //     // file.open (csvFile, std::ios::app);
-
-    //     // if (file) {
-    //     //     file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << "" << "\n";
-    //     // }
-
-    //     //messageId++;
-    // }
-    // else if (role == FREE)
-    // {
-    //     // //for non platoon vehicles
-    //     // auto fakeCam = new FakeCAMMessage();
-    //     // fakeCam->setVehicleId(id.c_str());
-    //     // fakeCam->setMessageId((id + "_" + std::to_string(messageId)).c_str());
-    //     // //std::cout << "ID: " << id.c_str() << "messageId: " << id + std::to_string(messageId) << "\n";
-    //     // fakeCam->setPositionX(mVehicleController->getPosition().x / meter);
-    //     // fakeCam->setPositionY(mVehicleController->getPosition().y / meter);
-    //     // fakeCam->setEdgeName(vehicle_api.getRoadID(id).c_str());
-    //     // fakeCam->setLaneIndex(vehicle_api.getLaneIndex(id));
-    //     // fakeCam->setSpeed(mVehicleController->getSpeed() / meter_per_second);
-    //     // fakeCam->setTime(simTime());
-    //     // fakeCam->setByteLength(300);
-    //     // num_fack_cam_sent++;
-    //     // messageId++;
-    //     // request(req, fakeCam);
-
-    // }
 }
 
 void ItsG5App::indicate(const vanetza::btp::DataIndication& ind, omnetpp::cPacket* packet)
@@ -194,13 +103,7 @@ void ItsG5App::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObject
         req.gn.communication_profile = geonet::CommunicationProfile::ITS_G5;
         
         request(req, sigMessage);
-            
-            // std::fstream file;
-            // file.open (csvFile, std::ios::app);
-
-            // if (file) {
-            //     file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << "" << "\n";
-            // }     
+                 
     }
 
 

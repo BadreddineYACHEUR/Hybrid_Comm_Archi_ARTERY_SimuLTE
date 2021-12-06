@@ -19,6 +19,8 @@ class HybridApp : public cSimpleModule, public cListener
 		void finish();
 		void handleMessage(omnetpp::cMessage*) override;
 		void sendToSubApps (omnetpp::cMessage* msg);
+		void sendToITS_G5 (omnetpp::cMessage* msg);
+		void sendToLTE_V2X (omnetpp::cMessage* msg);
 
 		void receiveSignal (cComponent*, simsignal_t, cObject* /*const char**/, cObject*) override;
 

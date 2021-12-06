@@ -14,8 +14,13 @@ packet PlatooningMessage
 					 // 1 = Join request
 					 // 2 = Join response
 
-	int interface;
+	int interface; 	// 0 = ITS-G5
+					// 1 = LTE-V2X
 
+	int sending_interface; 	// 0 = ITS-G5
+							// 1 = LTE-V2X
+							// 3 = Both
+					
 	//leader response
 	bool accepted = false;
 	string joinerId;
