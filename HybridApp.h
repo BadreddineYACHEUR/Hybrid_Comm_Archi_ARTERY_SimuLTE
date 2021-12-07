@@ -27,6 +27,7 @@ class HybridApp : public cSimpleModule, public cListener
 		//Signals
 
 		omnetpp::simsignal_t toHybridServiceSignal;
+		omnetpp::simsignal_t toHybridServiceDoubleSignal;
 
 		//Gates
 

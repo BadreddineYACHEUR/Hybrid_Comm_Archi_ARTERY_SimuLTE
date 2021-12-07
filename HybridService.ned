@@ -18,13 +18,14 @@ import BaseProtocol;
 import SubApplication;
 import BaseCommMode;
 import HybridApp;
+import Managment.Managment;
 
 module HybridService like ItsG5Service
 {
     parameters:
         @class(HybridService);
         // @signal[PlatooningUnicastReceived](type=cObject);
-        
+
         //string protocol_type = "BaseProtocol";
 
         // duplication or agregation
@@ -43,24 +44,31 @@ module HybridService like ItsG5Service
     submodules:
 
         mode: <communication_mode> like BaseCommMode {
-            @display("p=166.725,21.6");
+            @display("p=189.675,21.6");
         }
 
         mainApp: HybridApp {
 
-            @display("p=44.550003,89.775");
+            @display("p=63.45,102.600006");
             gates:
                 hybridAppIn[num_sub_apps];
                 hybridAppOut[num_sub_apps];
         }
 
         subApp[num_sub_apps]: SubApplication {
-            @display("p=44.550003,21.6,row,50");
+            @display("p=63.45,43.2,row,50");
         }
+
+        managmentLayer: Managment {
+            @display("p=189.675,84.375");
+        }
+
+
 
         //prot: <protocol_type> like BaseProtocol {
           //  @display("p=104.72,90.44");
         //}
+
 
 
     connections allowunconnected:

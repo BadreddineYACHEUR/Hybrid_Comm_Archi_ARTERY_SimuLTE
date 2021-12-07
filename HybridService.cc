@@ -10,8 +10,6 @@
 #include <fstream>
 #include <iostream>
 #include "HybridService.h"
-
-
 #include "RLAgentUtils/Network.h"
 #include <math.h>
 #include <chrono>
@@ -20,7 +18,9 @@
 #include <tuple>
 #include "torch/torch.h"
 #include "artery/inet/VanetRadio.h"
-// #include <lte/stack/phy/layer/LtePhyUeD2D.h>
+// #include "stack/phy/ChannelModel/LteRealisticChannelModel.h"
+#include "/home/byacheur/Apps/artery/src/artery/lte/Managment/Managment.h"
+
 
 
 
@@ -31,6 +31,7 @@ using namespace vanetza;
 Define_Module(HybridService)
 
 static const simsignal_t fromMainAppSignal = cComponent::registerSignal("toHybridServiceSignal");
+
 
 void HybridService::init(int input_dims, int num_actions, int hidden_dims){
         network = Net(input_dims, hidden_dims, num_actions);
@@ -81,7 +82,7 @@ void HybridService::initialize()
             leader.vehicleId = vehicle_id;
             leader.idInPlatoon = 0;
             platoonMembers = {leader};
-            mVehicleController->setSpeed(10 * units::si::meter_per_second);
+            mVehicleController->setSpeed(10 * boost::units::si::meter_per_second);
 
         }
 
@@ -104,6 +105,8 @@ void HybridService::initialize()
 
     // Signals 
     getParentModule()->subscribe(fromMainAppSignal, this);
+
+
     toMainAppSignal = cComponent::registerSignal("toMainAppSignal");
 
 	// Hybrid init
@@ -113,15 +116,6 @@ void HybridService::initialize()
 	target_network->network_id = vehicle_id + "_target_Net" ;
 
 	std::cout << network << "\n the net " << network->network_id << "\n";
-
-	std::cout << this->getParentModule() << "\n";
-	std::cout << this->getParentModule()->getParentModule() << "\n";
-	std::cout << this->getParentModule()->getParentModule()->getSubmodule("wlan", 0) << "\n";
-	
-	cModule* radio = this->getParentModule()->getParentModule()->getSubmodule("wlan", 0)->getSubmodule("radio");
-	// auto radio_LTE = check_and_cast<LtePhyUeD2D*>(this->getParentModule()->getParentModule()->getSubmodule("lteNic")->getSubmodule("phy"));
-	std::cout << this->getParentModule()->getParentModule()->getSubmodule("lteNic") << "\n";
-
     
 
 }
@@ -474,6 +468,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
     }
 }
 
+
 void HybridService::sendToMainApp(cMessage* msg, std::string id)
 {
 	//std::cout << "sending from HybridService to main App the following message: " << messageId << "\n";
@@ -492,14 +487,18 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 	bool done = false;
 
 	// Getting stat parameters
-	cModule* radio = this->getParentModule()->getParentModule()->getSubmodule("wlan", 0)->getSubmodule("radio");
-	double SNIR_ITS_G5 = (check_and_cast<artery::VanetRadio*>(radio))->minSNIR_ITS_G5; 
-	std::cout << "SNIR = " << SNIR_ITS_G5 << "\n";
-    torch::Tensor observation = torch::tensor({0.8, SNIR_ITS_G5, 0.9, 25.0, 0.99, 50.0});
-	int action = choose_action(observation);
 	
+	auto managmentLayer = check_and_cast<artery::Managment::Managment*>(this->getParentModule()->getParentModule()->getSubmodule("managmentLayer"));
+
+    torch::Tensor observation = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, managmentLayer->PRR_LTE, managmentLayer->SINR_LTE, 0.99, 50.0});
+	std::cout << "observation " << observation << "\n";
+	int action = choose_action(observation);
 	msg_->setSending_interface(action);
 
+	/*torch::Tensor observation_ = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, 0.9, 25.0, 0.99, 50.0});
+	double reward = this->reward(managmentLayer->SINR_ITS_G5, SINR_LTE, PRR_LTE, 1);
+	store_transition(observation, observation_, action, reward, false);*/
+	
 	emit(toMainAppSignal, msg_);
 }
 
@@ -522,7 +521,7 @@ void HybridService::CACCSpeedControl(std::string vehicle_id, double desired_spee
 
         std::cout << "test speed control ID:" << vehicle_id.c_str() << " Difference in speed:: " << desired_speed - vehicle_speed << "\n";
 
-        mVehicleController->setSpeed((vehicle_speed + accel) * units::si::meter_per_second);
+        mVehicleController->setSpeed((vehicle_speed + accel) * boost::units::si::meter_per_second);
     }
     
 }
@@ -546,7 +545,7 @@ void HybridService::CACCGapControl(std::string vehicle_id, std::string pre_vehic
         std::cout << "test gap control ID: between " << vehicle_id.c_str() << " and pree :: " << pre_vehicle_id << " Difference in distance:: " << distance << "speed Difference ::" << speed_difference << "\n";
         double speed = vehicle_speed + (k_5 * gap_deviation) + (k_6 * speed_deviation);
         std::cout << speed << "\n";
-        mVehicleController->setSpeed(speed * units::si::meter_per_second);
+        mVehicleController->setSpeed(speed * boost::units::si::meter_per_second);
     }
 }
 
@@ -626,4 +625,9 @@ void HybridService::learn(){
 
     decrement_epsilon();
 
+}
+
+double HybridService::reward(double sinr_ITS_G5, double sinr_LTE, double prr_LTE, bool received)
+{
+    return received;
 }

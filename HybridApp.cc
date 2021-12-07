@@ -28,6 +28,7 @@ void HybridApp::initialize()
 
 	// Signals 
     toHybridServiceSignal = cComponent::registerSignal("toHybridServiceSignal");
+	toHybridServiceDoubleSignal = cComponent::registerSignal("toHybridServiceDoubleSignal");
 }
 
 void HybridApp::handleMessage(omnetpp::cMessage* msg){
@@ -35,6 +36,7 @@ void HybridApp::handleMessage(omnetpp::cMessage* msg){
 	//std::cout << "Message " << msg << " arrived.\n";
 
 	emit(toHybridServiceSignal, check_and_cast<PlatooningMessage*>(msg));
+	emit(toHybridServiceDoubleSignal, 21.25);
 
 }
 

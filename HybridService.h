@@ -21,12 +21,14 @@ class HybridService : public artery::ItsG5Service
 		void indicate(const vanetza::btp::DataIndication&, omnetpp::cPacket*) override;
 		void trigger() override;
 		void receiveSignal (cComponent*, omnetpp::simsignal_t, cObject* /*const char**/, cObject*) override;
+
 		void sendToMainApp (omnetpp::cMessage* msg, std::string id);
 
 		// RAT selection Control agent functions  
 
         int choose_action(torch::Tensor state);
         void store_transition(torch::Tensor state, torch::Tensor new_state, int action, double reward, bool done);
+        double reward(double sinr_ITS_G5, double sinr_LTE, double prr_LTE, bool received);
 
         void replace_target_network();
         void decrement_epsilon();

@@ -13,31 +13,18 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
+package Managment;
 
-
-simple HybridApp
+simple Managment
 {
     parameters:
 
-    	//Number of applications
-
-    	int num_apps = default(0);
-
-    	// Number of message sent
-    	int num_messages = 0;
-
     	// Other parameters
 
-        @class(HybridApp);
+
+        @class(Managment);
+
         @display("i=block/app2;bgb=214.88,131.92");
 
-        @signal[toHybridServiceSignal];
-        @signal[toHybridServiceDoubleSignal];
 
-
-    gates:
-    
-        input hybridAppIn[];
-        output hybridAppOut[];
-    
 }
