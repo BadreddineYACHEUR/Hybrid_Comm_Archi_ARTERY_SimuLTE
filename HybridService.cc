@@ -63,67 +63,53 @@ void HybridService::initialize()
 
 
 
-    if (vehicle_id.compare(0, 14, "platoon_leader") == 0)
-        {
-        	csvFile = "results/" + vehicle_id + ".csv";
-			csvFileSNIRLTE = "results/SNIRLTE" + vehicle_id + ".csv";
-			csvFileSNIRG5 = "results/SNIRG5" + vehicle_id + ".csv";
+    if (vehicle_id.compare(0, 14, "platoon_leader") == 0){
+		role = LEADER;
+		platoonId = 0;
+		platoonSize = 1;
+		leader_speed = 10;
 
-        	std::fstream file;
-			std::fstream fileLTE;
-			std::fstream fileG5;
-           	file.open (csvFile, std::ios::app);
-			fileLTE.open (csvFileSNIRLTE, std::ios::app);
-			fileG5.open (csvFileSNIRG5, std::ios::app);
-			   
-            if (file) {
-            	file << "Sent" << ", " << "Received" << "\n";
-            	
-            }
-			file.close();
+		platoonMember leader;
+		leader.vehicleId = vehicle_id;
+		leader.idInPlatoon = 0;
+		platoonMembers = {leader};
+		mVehicleController->setSpeed(10 * boost::units::si::meter_per_second);
 
-			if (fileLTE) {
-            	fileLTE << "SINR" << ", " << "PRR" << "\n";
-            	
-            }
-			fileLTE.close();
-
-			if (fileG5) {
-            	fileG5 << "SINR" << ", " << "PRR" << "\n";
-            	
-            }
-			fileG5.close();
-
-            role = LEADER;
-            platoonId = 0;
-            platoonSize = 1;
-            leader_speed = 10;
-
-            platoonMember leader;
-            leader.vehicleId = vehicle_id;
-            leader.idInPlatoon = 0;
-            platoonMembers = {leader};
-            mVehicleController->setSpeed(10 * boost::units::si::meter_per_second);
-
-        }
-
-    else if (vehicle_id.compare(0, 16, "platoon_follower") == 0)
-    {
-        role = JOINER;
-
-        csvFile = "results/" + vehicle_id + ".csv";
-
-    	std::fstream file;
-       	file.open (csvFile, std::ios::app);
-
-        if (file) {
-        	file << "Sent" << ", " << "mode" << ", " << "Received" << ", " << "interface" << "\n";
-        	
-        }
-		file.close();
     }
+    else if (vehicle_id.compare(0, 16, "platoon_follower") == 0)
+        role = JOINER; 
     else if (vehicle_id.compare(0, 4, "free_flow") == 0)
         role = FREE;
+
+
+	if (vehicle_id.compare(0, 4, "free_flow") != 0){
+
+		csvFile = "results/" + vehicle_id + ".csv";
+		csvFileSNIRLTE = "results/SNIRLTE" + vehicle_id + ".csv";
+		csvFileSNIRG5 = "results/SNIRG5" + vehicle_id + ".csv";
+
+		std::fstream file;
+		std::fstream fileLTE;
+		std::fstream fileG5;
+		file.open (csvFile, std::ios::app);
+		fileLTE.open (csvFileSNIRLTE, std::ios::app);
+		fileG5.open (csvFileSNIRG5, std::ios::app);
+			
+		if (file) {
+        	file << "Sent" << ", " << "mode" << ", " << "Received" << ", " << "interface" << "\n";
+        }
+		file.close();
+
+		if (fileLTE) {
+			fileLTE << "SINR" << ", " << "PRR" << "\n";
+		}
+		fileLTE.close();
+
+		if (fileG5) {
+			fileG5 << "SINR" << ", " << "PRR" << "\n";
+		}
+		fileG5.close();
+	}
 
     // Signals 
     getParentModule()->subscribe(fromMainAppSignal, this);
@@ -218,6 +204,7 @@ void HybridService::finish()
 		
 		std::cout << "Hits " << std::to_string(message_hits).c_str() << "\n"; 
 		std::cout << "LIst Size " << std::to_string(receivedMessages.size()).c_str() << "\n";
+		std::cout << "epsilon = " << epsilon << " Messages = " << environment.number_messages << "\n";
 
 		torch::save(network, environment.pt_net);
 		torch::save(target_network, environment.pt_target);
