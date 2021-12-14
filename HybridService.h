@@ -9,7 +9,10 @@
 #include <stdio.h>
 #include "RLAgentUtils/Network.h"
 #include "RLAgentUtils/Memory.h"
+#include "RLAgentUtils/Env.h"
 #include <string>
+#include "/home/byacheur/Apps/artery/src/artery/lte/Managment/Managment.h"
+
 
 class HybridService : public artery::ItsG5Service
 {
@@ -28,7 +31,6 @@ class HybridService : public artery::ItsG5Service
 
         int choose_action(torch::Tensor state);
         void store_transition(torch::Tensor state, torch::Tensor new_state, int action, double reward, bool done);
-        double reward(double sinr_ITS_G5, double sinr_LTE, double prr_LTE, bool received);
 
         void replace_target_network();
         void decrement_epsilon();
@@ -70,6 +72,7 @@ class HybridService : public artery::ItsG5Service
 
 	private:
 		traci::VehicleController* mVehicleController = nullptr;
+        artery::Managment::Managment* managmentLayer = nullptr;
 		omnetpp::cMessage* m_self_msg;
 	
 
@@ -92,6 +95,7 @@ class HybridService : public artery::ItsG5Service
     private: int mem_max = 500000;
     
     private: Memory agent_memory;
+    private: Environment environment;
 
 };
 

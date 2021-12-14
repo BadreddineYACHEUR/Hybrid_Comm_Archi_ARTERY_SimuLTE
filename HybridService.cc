@@ -42,7 +42,8 @@ void HybridService::init(int input_dims, int num_actions, int hidden_dims){
 }
 
 HybridService::HybridService():optimizer(network->parameters(), torch::optim::AdamOptions(0.0001)){
-	this->init(6, 512, 3);
+
+	this->init(environment.observation_space, 512, environment.action_space);
 }
 
 void HybridService::initialize()
@@ -52,6 +53,7 @@ void HybridService::initialize()
 
 	mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();
     const std::string vehicle_id = mVehicleController->getVehicleId();
+	managmentLayer = check_and_cast<artery::Managment::Managment*>(this->getParentModule()->getParentModule()->getSubmodule("managmentLayer"));
     leader_speed = 10;  
 
     //writePRInfo(csvFile, "Sent", "Received");
@@ -96,7 +98,7 @@ void HybridService::initialize()
        	file.open (csvFile, std::ios::app);
 
         if (file) {
-        	file << "Sent" << ", " << "Received" << "\n";
+        	file << "Sent" << "mode" << ", " << "Received" << "interface" << "\n";
         	
         }
     }
@@ -115,7 +117,11 @@ void HybridService::initialize()
 	network->network_id = vehicle_id + "_Net";
 	target_network->network_id = vehicle_id + "_target_Net" ;
 
-	std::cout << network << "\n the net " << network->network_id << "\n";
+	// Loading nn parameters
+	torch::load(target_network, environment.pt_target);
+	torch::load(network, environment.pt_net);
+
+	//std::cout << network << "\n the net " << network->network_id << "\n";
     
 
 }
@@ -134,7 +140,7 @@ void HybridService::trigger()
     packet->setVehicleId(id.c_str());
     packet->setMessageId((id + "_" + std::to_string(messageId)).c_str());
 
-    std::cout << "ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
+    //std::cout << "ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
 
     packet->setPositionX(mVehicleController->getPosition().x / meter);
     packet->setPositionY(mVehicleController->getPosition().y / meter);
@@ -151,7 +157,7 @@ void HybridService::trigger()
 
         packet->setByteLength(50);
 
-        std::cout << "Joiner sending message ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
+        //std::cout << "Joiner sending message ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
 
         sendToMainApp(packet, id);
 
@@ -185,7 +191,6 @@ void HybridService::indicate(const btp::DataIndication& ind, cPacket* packet)
 }
 
 
-
 void HybridService::finish()
 {
 	ItsG5Service::finish();
@@ -193,6 +198,9 @@ void HybridService::finish()
 		
 		std::cout << "Hits " << std::to_string(message_hits).c_str() << "\n"; 
 		std::cout << "LIst Size " << std::to_string(receivedMessages.size()).c_str() << "\n";
+
+		torch::save(network, environment.pt_net);
+		torch::save(target_network, environment.pt_target);
 	}
 }
 
@@ -210,7 +218,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
     	auto sigMessage = check_and_cast<PlatooningMessage*>(obj);
         
-        std::cout << "Message from fromMainAppSignal received " << sigMessage->getMessageId() << " \n";
+        // std::cout << "Message from fromMainAppSignal received " << sigMessage->getMessageId() << " \n";
 
         using boost::units::si::meter;
 	    using boost::units::si::meter_per_second;
@@ -237,7 +245,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
         if (is_received)
         {
-            std::cout << "Hit ************** \n";
+            //std::cout << "Hit ************** \n";
             message_hits++;
 
             
@@ -248,7 +256,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 		        file.open (csvFile, std::ios::app);
 
 		        if (file) {
-		            file << "" << ", " << simTime() << "_" << receivedMessage->getMessageId() << ", " << std::to_string(receivedMessage->getInterface()).c_str() << "\n";
+		            file << "" << ", " << "" << ", " << simTime() << "_" << receivedMessage->getMessageId() << ", " << std::to_string(receivedMessage->getInterface()).c_str() << "\n";
 		        }
 	    	}
 	    	receivedMessages.push_front(receivedMessage->getMessageId());
@@ -256,10 +264,26 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
         }
 
         
+		// Update state of the environment and launch the learning process
 
-	    
+		if(messageId != 0){
+
+			environment.new_state = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, managmentLayer->PRR_LTE, managmentLayer->SINR_LTE, 0.99, 50.0});
+
+			std::cout << "state: \n" << environment.state << " \n new state: \n " << environment.new_state << "\n";
+
+			std::tuple<double, bool> step_result = environment.step();
+
+			
+			store_transition(environment.state, environment.new_state, environment.choosen_action, std::get<0>(step_result), std::get<0>(step_result));
+			learn();
+		}
+
+
+		// Message reception logic 
 
 	    auto& vehicle_api = mVehicleController->getLiteAPI().vehicle();
+
 	    const std::string id = mVehicleController->getVehicleId();
 
 	    if (role == LEADER){
@@ -343,7 +367,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	                platoonSize = receivedMessage->getPlatoonSize();
 	                leader_speed = receivedMessage->getSpeed();
 
-	                std::cout << "Join Accepted -> ID: " << id.c_str() << " id sender " << receivedMessage->getIdInPlatoon() << " id vehicle: " << platoonId << " messageId: " << id + std::to_string(messageId) << " speed: " <<  mVehicleController->getSpeed() / meter_per_second <<  "\n";
+	                // std::cout << "Join Accepted -> ID: " << id.c_str() << " id sender " << receivedMessage->getIdInPlatoon() << " id vehicle: " << platoonId << " messageId: " << id + std::to_string(messageId) << " speed: " <<  mVehicleController->getSpeed() / meter_per_second <<  "\n";
 
 	                // begin CACC procedure to join the platoon
 	                // TODO: verify time gap
@@ -362,24 +386,24 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	                    
 	 
 	                    double distance = squarDistance(xPosV1, xPosV2, yPosV1, yPosV2);
-	                    std::cout << "id : " << id.c_str() << " id pree : " << receivedMessage->getVehicleId() << " distance : " << distance << "\n";
+	                    // std::cout << "id : " << id.c_str() << " id pree : " << receivedMessage->getVehicleId() << " distance : " << distance << "\n";
 
 	                    if ((distance > 21) && (xPosV2 > xPosV1))
 	                    {
-	                        std::cout << "> 20\n";
+	                        // std::cout << "> 20\n";
 	                        
 	                        mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
 	                    }
 	                    else if (((distance < 21) && (distance > 19)) && (xPosV2 > xPosV1)) {
 
-	                        std::cout << "< 15.5 \n";
+	                        // std::cout << "< 15.5 \n";
 	                        mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
 	                        vehicle_api.changeLane(id, receivedMessage->getLaneIndex(), 2);
 	                    }
 
 	                    else if ((distance < 15) || (xPosV2 < xPosV1))
 	                    {
-	                        std::cout << "< 10\n";
+	                        // std::cout << "< 10\n";
 	                        mVehicleController->setSpeed((0.5 * leader_speed) * meter_per_second);
 	                        vehicle_api.changeLane(id, pow(receivedMessage->getLaneIndex() - 1, 2), 2);
 	                        
@@ -415,24 +439,24 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
 	            double distance = squarDistance(xPosV1, xPosV2, yPosV1, yPosV2);
 
-	            std::cout << "id : " << id.c_str() << " id pree : " << receivedMessage->getVehicleId() << " distance : " << distance << "\n";
+	            //std::cout << "id : " << id.c_str() << " id pree : " << receivedMessage->getVehicleId() << " distance : " << distance << "\n";
 
 	            if ((distance > 21) && (xPosV2 > xPosV1))
 	            {
-	                std::cout << "> 20\n";
+	                //std::cout << "> 20\n";
 	                
 	                mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
 	            }
 	            else if (((distance < 21) && (distance > 19)) && (xPosV2 > xPosV1)) {
 
-	                std::cout << "< 15.5 \n";
+	                //std::cout << "< 15.5 \n";
 	                mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
 	                vehicle_api.changeLane(id, receivedMessage->getLaneIndex(), 2);
 	            }
 
 	            else if ((distance < 15) || (xPosV2 < xPosV1))
 	            {
-	                std::cout << "< 10\n";
+	                //std::cout << "< 10\n";
 	                mVehicleController->setSpeed((0.5 * leader_speed) * meter_per_second);
 	                vehicle_api.changeLane(id, pow(receivedMessage->getLaneIndex() - 1, 2), 2);
 	                
@@ -473,13 +497,6 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 {
 	//std::cout << "sending from HybridService to main App the following message: " << messageId << "\n";
 
-	std::fstream file;
-    file.open (csvFile, std::ios::app);
-
-    if (file) {
-    	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << "" << "\n";
-    }
-
 	auto msg_ = check_and_cast<PlatooningMessage*>(msg);
 
 	// RL algo
@@ -487,17 +504,19 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 	bool done = false;
 
 	// Getting stat parameters
+	torch::Tensor observation = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, managmentLayer->PRR_LTE, managmentLayer->SINR_LTE, 0.99, 50.0});
+	environment.state = observation;
 	
-	auto managmentLayer = check_and_cast<artery::Managment::Managment*>(this->getParentModule()->getParentModule()->getSubmodule("managmentLayer"));
-
-    torch::Tensor observation = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, managmentLayer->PRR_LTE, managmentLayer->SINR_LTE, 0.99, 50.0});
-	std::cout << "observation " << observation << "\n";
 	int action = choose_action(observation);
+	environment.choosen_action = action;
 	msg_->setSending_interface(action);
 
-	/*torch::Tensor observation_ = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, 0.9, 25.0, 0.99, 50.0});
-	double reward = this->reward(managmentLayer->SINR_ITS_G5, SINR_LTE, PRR_LTE, 1);
-	store_transition(observation, observation_, action, reward, false);*/
+	std::fstream file;
+    file.open (csvFile, std::ios::app);
+
+    if (file) {
+    	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << action << ", " << "" << "\n";
+    }
 	
 	emit(toMainAppSignal, msg_);
 }
@@ -519,7 +538,7 @@ void HybridService::CACCSpeedControl(std::string vehicle_id, double desired_spee
     {
         double accel = k_4*(desired_speed - vehicle_speed);
 
-        std::cout << "test speed control ID:" << vehicle_id.c_str() << " Difference in speed:: " << desired_speed - vehicle_speed << "\n";
+        //std::cout << "test speed control ID:" << vehicle_id.c_str() << " Difference in speed:: " << desired_speed - vehicle_speed << "\n";
 
         mVehicleController->setSpeed((vehicle_speed + accel) * boost::units::si::meter_per_second);
     }
@@ -534,17 +553,17 @@ void HybridService::CACCGapControl(std::string vehicle_id, std::string pre_vehic
     double k_6 = 0.25;
     double t_desired = 0.4;
     double speed_difference = preceding_vehicle_speed - vehicle_speed;
-    std::cout << "enter GAP Control" << "\n";
+    //std::cout << "enter GAP Control" << "\n";
     double gap_deviation = distance - (t_desired * vehicle_speed);
     double speed_deviation = preceding_vehicle_speed - vehicle_speed - (t_desired * vehicle_accel);
     
     if ((gap_deviation < 0.2) && (speed_deviation < 0.1))
     {
-        std::cout << "gap deviation " << gap_deviation << " speed_deviation " << speed_deviation << "\n";
+        //std::cout << "gap deviation " << gap_deviation << " speed_deviation " << speed_deviation << "\n";
 
-        std::cout << "test gap control ID: between " << vehicle_id.c_str() << " and pree :: " << pre_vehicle_id << " Difference in distance:: " << distance << "speed Difference ::" << speed_difference << "\n";
+        //std::cout << "test gap control ID: between " << vehicle_id.c_str() << " and pree :: " << pre_vehicle_id << " Difference in distance:: " << distance << "speed Difference ::" << speed_difference << "\n";
         double speed = vehicle_speed + (k_5 * gap_deviation) + (k_6 * speed_deviation);
-        std::cout << speed << "\n";
+        //std::cout << speed << "\n";
         mVehicleController->setSpeed(speed * boost::units::si::meter_per_second);
     }
 }
@@ -587,7 +606,7 @@ void HybridService::learn(){
     if (agent_memory.get_mem_ctr() < batch_size)
         return ;
     
-    if(learn_step_counter % 1000 == 0)
+    //if(learn_step_counter % 1000 == 0)
         std::cout << "Agent is learning and epsilon = " << epsilon <<  "*************************************************\n";
 
     optimizer.zero_grad();
@@ -625,9 +644,4 @@ void HybridService::learn(){
 
     decrement_epsilon();
 
-}
-
-double HybridService::reward(double sinr_ITS_G5, double sinr_LTE, double prr_LTE, bool received)
-{
-    return received;
 }
