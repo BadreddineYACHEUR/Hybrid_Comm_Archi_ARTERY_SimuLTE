@@ -66,14 +66,33 @@ void HybridService::initialize()
     if (vehicle_id.compare(0, 14, "platoon_leader") == 0)
         {
         	csvFile = "results/" + vehicle_id + ".csv";
+			csvFileSNIRLTE = "results/SNIRLTE" + vehicle_id + ".csv";
+			csvFileSNIRG5 = "results/SNIRG5" + vehicle_id + ".csv";
 
         	std::fstream file;
+			std::fstream fileLTE;
+			std::fstream fileG5;
            	file.open (csvFile, std::ios::app);
+			fileLTE.open (csvFileSNIRLTE, std::ios::app);
+			fileG5.open (csvFileSNIRG5, std::ios::app);
 			   
             if (file) {
             	file << "Sent" << ", " << "Received" << "\n";
             	
             }
+			file.close();
+
+			if (fileLTE) {
+            	fileLTE << "SINR" << ", " << "PRR" << "\n";
+            	
+            }
+			fileLTE.close();
+
+			if (fileG5) {
+            	fileG5 << "SINR" << ", " << "PRR" << "\n";
+            	
+            }
+			fileG5.close();
 
             role = LEADER;
             platoonId = 0;
@@ -98,9 +117,10 @@ void HybridService::initialize()
        	file.open (csvFile, std::ios::app);
 
         if (file) {
-        	file << "Sent" << "mode" << ", " << "Received" << "interface" << "\n";
+        	file << "Sent" << ", " << "mode" << ", " << "Received" << ", " << "interface" << "\n";
         	
         }
+		file.close();
     }
     else if (vehicle_id.compare(0, 4, "free_flow") == 0)
         role = FREE;
@@ -258,6 +278,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 		        if (file) {
 		            file << "" << ", " << "" << ", " << simTime() << "_" << receivedMessage->getMessageId() << ", " << std::to_string(receivedMessage->getInterface()).c_str() << "\n";
 		        }
+				file.close();
 	    	}
 	    	receivedMessages.push_front(receivedMessage->getMessageId());
 
@@ -270,7 +291,18 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
 			environment.new_state = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, managmentLayer->PRR_LTE, managmentLayer->SINR_LTE, 0.99, 50.0});
 
-			std::cout << "state: \n" << environment.state << " \n new state: \n " << environment.new_state << "\n";
+			std::fstream file;
+			file.open(csvFileSNIRG5, std::ios::app);
+			if (file) {
+				file << managmentLayer->SINR_ITS_G5 << ", " << "" << "\n";
+			}
+			file.close();
+
+			file.open(csvFileSNIRLTE, std::ios::app);
+			if (file) {
+				file << managmentLayer->SINR_LTE << ", " << managmentLayer->PRR_LTE << "\n";
+			}
+			file.close();
 
 			std::tuple<double, bool> step_result = environment.step();
 
@@ -515,9 +547,22 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
     file.open (csvFile, std::ios::app);
 
     if (file) {
-    	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << action << ", " << "" << "\n";
+    	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << action << ", " << "" << ", " << managmentLayer->SINR_ITS_G5 << ", " << managmentLayer->SINR_LTE<< "\n";
     }
-	
+	file.close();
+
+	file.open(csvFileSNIRG5, std::ios::app);
+	if (file) {
+		file << managmentLayer->SINR_ITS_G5 << ", " << "" << "\n";
+	}
+	file.close();
+
+	file.open(csvFileSNIRLTE, std::ios::app);
+	if (file) {
+		file << managmentLayer->SINR_LTE << ", " << managmentLayer->PRR_LTE << "\n";
+	}
+	file.close();
+
 	emit(toMainAppSignal, msg_);
 }
 

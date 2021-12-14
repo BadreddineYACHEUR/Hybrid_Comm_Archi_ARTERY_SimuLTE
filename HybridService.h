@@ -60,6 +60,8 @@ class HybridService : public artery::ItsG5Service
 		// Platoon managment
 
 		std::string csvFile;
+        std::string csvFileSNIRLTE;
+        std::string csvFileSNIRG5;
         int messageId = 0;
         int platoonId;
         int platoonSize = 0;

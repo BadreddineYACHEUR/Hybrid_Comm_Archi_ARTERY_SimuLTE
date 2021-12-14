@@ -70,7 +70,7 @@ struct Environment
         double snr_lte = state[3].item().toDouble();
         
         double diff_snr = (snr_its_g5_ - snr_its_g5) + (snr_lte_ - snr_lte);
-        double diff_prr = (prr_lte_ + prr_lte);
+        double diff_prr = (prr_lte_ - prr_lte);
 
         // double part1 = (average_snr - snr_tresh) / (average_snr + snr_tresh);
         // double part2 = (average_prr - prr_tresh) / (average_prr + prr_tresh);
