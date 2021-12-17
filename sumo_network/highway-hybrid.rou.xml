@@ -60,11 +60,11 @@
     </flow>
 
 
-    <vehicle id="platoon_leader" depart="14.00" departSpeed="10" color="yellow" type="platoonLeader">
+    <vehicle id="platoon_leader" depart="20.00" departSpeed="10" color="yellow" type="platoonLeader">
         <route edges="-edge1" color="cyan"/>
     </vehicle>
 
-    <flow id="platoon_follower" begin="19.00" departSpeed="10" type="platoonFollower" color="red" number="5" vehsPerHour="1000" departLane="1">
+    <flow id="platoon_follower" begin="25.00" departSpeed="10" type="platoonFollower" color="red" number="5" vehsPerHour="1000" departLane="1">
         <route edges="-edge1" color="cyan"/>
     </flow>
 

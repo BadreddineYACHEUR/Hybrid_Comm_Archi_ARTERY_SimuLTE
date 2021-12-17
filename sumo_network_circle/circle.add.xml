@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on mar. 14 déc. 2021 19:08:41 by Eclipse SUMO netedit Version 1.8.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network%20(copy)/highway-hybrid.net.xml"/>
+    </input>
+
+    <output>
+        <output-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network%20(copy)/highway-hybrid.net.xml"/>
+    </output>
+
+    <processing>
+        <geometry.min-radius.fix.railways value="false"/>
+        <geometry.max-grade.fix value="false"/>
+        <offset.disable-normalization value="true"/>
+        <lefthand value="false"/>
+    </processing>
+
+    <junctions>
+        <no-internal-links value="true"/>
+        <no-turnarounds value="true"/>
+        <junctions.corner-detail value="5"/>
+        <junctions.limit-turn-speed value="5.5"/>
+        <rectangular-lane-cut value="false"/>
+    </junctions>
+
+    <pedestrian>
+        <walkingareas value="false"/>
+    </pedestrian>
+
+    <netedit>
+        <additional-files value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network%20(copy)/circle.add.xml"/>
+        <route-files value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network%20(copy)/highway-hybrid.rou.xml"/>
+    </netedit>
+
+    <report>
+        <aggregate-warnings value="5"/>
+    </report>
+
+</configuration>
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <rerouter id="rerouter_0" edges="gneE2" pos="-2960.10,-1068.45">
+        <interval begin="0.00" end="125000.00">
+            <destProbReroute id="-edge1"/>
+        </interval>
+    </rerouter>
+    <rerouter id="rerouter_1" edges="-edge1" pos="-2974.81,-996.34">
+        <interval begin="0.00" end="125000.00">
+            <destProbReroute id="gneE2"/>
+        </interval>
+    </rerouter>
+    <rerouter id="rerouter_2" edges="gneE5" pos="311.17,-1061.06">
+        <interval begin="0.00" end="125000.00">
+            <destProbReroute id="edge1"/>
+        </interval>
+    </rerouter>
+    <rerouter id="rerouter_3" edges="edge1" pos="227.45,-1003.24">
+        <interval begin="0.00" end="125000.00">
+            <destProbReroute id="gneE5"/>
+        </interval>
+    </rerouter>
+</additional>

@@ -1,0 +1,18 @@
+Hits 2484
+LIst Size 7457
+epsilon = 0.993803 Messages = 10001
+Hits 2805
+LIst Size 7439
+epsilon = 0.993494 Messages = 10001
+Hits 3048
+LIst Size 7358
+epsilon = 0.993291 Messages = 10001
+Hits 3134
+LIst Size 7353
+epsilon = 0.993209 Messages = 10001
+Hits 3305
+LIst Size 7185
+epsilon = 0.993124 Messages = 10001
+Hits 2942
+LIst Size 7462
+epsilon = 0.993343 Messages = 10001

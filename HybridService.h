@@ -3,7 +3,6 @@
 
 #include "artery/application/ItsG5Service.h"
 #include "artery/application/VehicleDataProvider.h"
-
 #include "torch/torch.h"
 #include <iostream>
 #include <stdio.h>
@@ -37,7 +36,6 @@ class HybridService : public artery::ItsG5Service
 		
 		void learn();
 
-
 	protected:
 		enum V_ROLE {FREE, LEADER, FOLLOWER, JOINER};
     	V_ROLE role = FREE;
@@ -69,8 +67,6 @@ class HybridService : public artery::ItsG5Service
         int message_hits = 0;
         bool is_in_platoon = false;
         std::list <platoonMember> platoonMembers;
-
-
 
 	private:
 		traci::VehicleController* mVehicleController = nullptr;

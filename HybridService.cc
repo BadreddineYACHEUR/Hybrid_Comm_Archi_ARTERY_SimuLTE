@@ -78,11 +78,11 @@ void HybridService::initialize()
     }
     else if (vehicle_id.compare(0, 16, "platoon_follower") == 0)
         role = JOINER; 
-    else if (vehicle_id.compare(0, 4, "free_flow") == 0)
+    else if (vehicle_id.compare(0, 4, "free") == 0)
         role = FREE;
 
 
-	if (vehicle_id.compare(0, 4, "free_flow") != 0){
+	if (vehicle_id.compare(0, 4, "free") != 0){
 
 		csvFile = "results/" + vehicle_id + ".csv";
 		csvFileSNIRLTE = "results/SNIRLTE" + vehicle_id + ".csv";
@@ -118,7 +118,6 @@ void HybridService::initialize()
     toMainAppSignal = cComponent::registerSignal("toMainAppSignal");
 
 	// Hybrid init
-
 
 	network->network_id = vehicle_id + "_Net";
 	target_network->network_id = vehicle_id + "_target_Net" ;
