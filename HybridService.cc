@@ -292,6 +292,11 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
 			std::tuple<double, bool> step_result = environment.step();
 
+			file.open(csvFileSNIRG5, std::ios::app);
+			if (file) {
+				file << "" << ", " << "" << "," << std::get<0>(step_result) << "\n";
+			}
+			file.close();
 			
 			store_transition(environment.state, environment.new_state, environment.choosen_action, std::get<0>(step_result), std::get<0>(step_result));
 			learn();
@@ -638,7 +643,7 @@ void HybridService::learn(){
         return ;
     
     //if(learn_step_counter % 1000 == 0)
-        std::cout << "Agent is learning and epsilon = " << epsilon <<  "*************************************************\n";
+        std::cout << "Agent is learning and epsilon = " << epsilon <<  "***************" << "And MEM cntr = " << agent_memory.get_mem_ctr() << "\n";
 
     optimizer.zero_grad();
 
@@ -658,13 +663,13 @@ void HybridService::learn(){
     torch::Tensor next_q_values = network->forward(sample_new_states);
     torch::Tensor target_next_q_values = target_network->forward(sample_new_states);
 
-    sample_actions =sample_actions.to(torch::kInt64);
+    sample_actions = sample_actions.to(torch::kInt64);
 
     torch::Tensor q_value = q_values.gather(1, sample_actions.unsqueeze(1)).squeeze(1);
     
     torch::Tensor maximum_next_q_values_index = std::get<1>(next_q_values.max(1));
     torch::Tensor next_q_value = target_next_q_values.gather(1, maximum_next_q_values_index.unsqueeze(1)).squeeze(1);
-    torch::Tensor expected_q_value = sample_rewards + gamma*next_q_value*(1-sample_terminals);
+    torch::Tensor expected_q_value = sample_rewards + gamma*next_q_value;
     
     torch::Tensor loss = torch::mse_loss(q_value, expected_q_value);
 
