@@ -653,7 +653,7 @@ void HybridService::learn(){
     const std::string vehicle_id = mVehicleController->getVehicleId();
 
     //if(learn_step_counter % 1000 == 0)
-        std::cout << "Agent " << mVehicleController->getLiteAPI().vehicle().getRouteID(vehicle_id) << " is learning and epsilon = " << epsilon <<  "***************" << "And MEM cntr = " << agent_memory.get_mem_ctr() << "\n";
+        std::cout << "Agent " << vehicle_id << " is learning and epsilon = " << epsilon <<  "***************" << "And MEM cntr = " << agent_memory.get_mem_ctr() << "\n";
 
     optimizer.zero_grad();
 
