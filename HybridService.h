@@ -82,7 +82,7 @@ class HybridService : public artery::ItsG5Service
     private: double epsilon = 1.0;
     private: double epsilon_min = 0.01;
     private: double epsilon_decay = 5e-7;
-    private: float lr = 0.01;
+    // private: float lr = 0.01;
     private: float gamma = 0.99;
     private: torch::optim::Adam optimizer;
     private: int action_space, observation_space;
@@ -90,7 +90,7 @@ class HybridService : public artery::ItsG5Service
     private: int learn_step_counter = 0;
     private: int replace_target_cnt = 10000;
     private: int batch_size = 32;
-    private: int mem_max = 500000;
+    private: int mem_max = 22000;
     
     private: Memory agent_memory;
     private: Environment environment;

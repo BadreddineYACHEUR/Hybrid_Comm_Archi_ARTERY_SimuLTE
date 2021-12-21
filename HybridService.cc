@@ -54,7 +54,7 @@ void HybridService::initialize()
 	mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();
     const std::string vehicle_id = mVehicleController->getVehicleId();
 	managmentLayer = check_and_cast<artery::Managment::Managment*>(this->getParentModule()->getParentModule()->getSubmodule("managmentLayer"));
-    leader_speed = 10;  
+    leader_speed = 10; 
 
     //writePRInfo(csvFile, "Sent", "Received");
 
@@ -125,8 +125,6 @@ void HybridService::initialize()
 	// Loading nn parameters
 	torch::load(target_network, environment.pt_target);
 	torch::load(network, environment.pt_net);
-
-	//std::cout << network << "\n the net " << network->network_id << "\n";
     
 
 }
@@ -185,7 +183,6 @@ void HybridService::trigger()
     }
     else if (role == FREE)
     {
-         
     }
 }
 
@@ -463,6 +460,12 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	            double distance = squarDistance(xPosV1, xPosV2, yPosV1, yPosV2);
 
 	            //std::cout << "id : " << id.c_str() << " id pree : " << receivedMessage->getVehicleId() << " distance : " << distance << "\n";
+				
+				if((vehicle_api.getRoadID(id).compare("gneE2") == 0) || (vehicle_api.getRoadID(id).compare("gneE1") == 0)){
+					xPosV2 = xPosV2 * -1;
+					xPosV1 = xPosV1 * -1;
+				}
+
 
 	            if ((distance > 21) && (xPosV2 > xPosV1))
 	            {
@@ -470,7 +473,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	                
 	                mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
 	            }
-	            else if (((distance < 21) && (distance > 19)) && (xPosV2 > xPosV1)) {
+	            else if ((distance < 21) && (distance > 19) && (xPosV2 > xPosV1)) {
 
 	                //std::cout << "< 15.5 \n";
 	                mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
@@ -499,8 +502,13 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	        double vehicle_accel = vehicle_api.getAcceleration(id);
 
 	        double distance = squarDistance(xPosV1, xPosV2, yPosV1, yPosV2);
+
+			if((vehicle_api.getRoadID(id).compare("gneE2") == 0) || (vehicle_api.getRoadID(id).compare("gneE1") == 0)){
+				xPosV2 = xPosV2 * -1;
+				xPosV1 = xPosV1 * -1;
+			}
 	        
-	        if ((receivedMessage->getPositionX() < mVehicleController->getPosition().x / meter) && (distance < 15) && (strcmp(vehicle_api.getRoadID(id).c_str(), receivedMessage->getEdgeName()) == 0))
+	        if ((xPosV2 < xPosV1) && (distance < 15) && (strcmp(vehicle_api.getRoadID(id).c_str(), receivedMessage->getEdgeName()) == 0))
 	        {
 	            //mVehicleController->setSpeed(0.5 * receivedMessage->getSpeed() * meter_per_second);
 	            
@@ -538,7 +546,7 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
     file.open (csvFile, std::ios::app);
 
     if (file) {
-    	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << action << ", " << "" << ", " << managmentLayer->SINR_ITS_G5 << ", " << managmentLayer->SINR_LTE<< "\n";
+    	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << action << ", " << "" << ", " << managmentLayer->SINR_ITS_G5 << ", " << managmentLayer->SINR_LTE << "," << environment.number_messages<< "\n";
     }
 	file.close();
 
@@ -641,9 +649,11 @@ void HybridService::learn(){
 
     if (agent_memory.get_mem_ctr() < batch_size)
         return ;
-    
+
+    const std::string vehicle_id = mVehicleController->getVehicleId();
+
     //if(learn_step_counter % 1000 == 0)
-        std::cout << "Agent is learning and epsilon = " << epsilon <<  "***************" << "And MEM cntr = " << agent_memory.get_mem_ctr() << "\n";
+        std::cout << "Agent " << mVehicleController->getLiteAPI().vehicle().getRouteID(vehicle_id) << " is learning and epsilon = " << epsilon <<  "***************" << "And MEM cntr = " << agent_memory.get_mem_ctr() << "\n";
 
     optimizer.zero_grad();
 
