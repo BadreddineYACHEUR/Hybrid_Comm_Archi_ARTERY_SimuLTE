@@ -118,19 +118,21 @@ void HybridService::initialize()
     toMainAppSignal = cComponent::registerSignal("toMainAppSignal");
 
 	// Hybrid init
+	
+	if((role == JOINER) || (role == LEADER)){
 
-	network->network_id = vehicle_id + "_Net";
-	target_network->network_id = vehicle_id + "_target_Net" ;
+		network->network_id = vehicle_id + "_Net";
+		target_network->network_id = vehicle_id + "_target_Net" ;
 
-	// Loading nn parameters
+		// Loading nn parameters
 
-	std::string net_model_name = environment.pt_net + vehicle_id;
-	std::string target_model_name = environment.pt_target + vehicle_id;
+		std::string net_model_name = environment.pt_net + vehicle_id;
+		std::string target_model_name = environment.pt_target + vehicle_id;
 
-	torch::load(target_network, target_model_name);
-	torch::load(network, net_model_name);
+		torch::load(target_network, target_model_name);
+		torch::load(network, net_model_name);
+	}
     
-
 }
 //emit(LteSignal, check_and_cast<PlatooningMessage*>(packet));
 

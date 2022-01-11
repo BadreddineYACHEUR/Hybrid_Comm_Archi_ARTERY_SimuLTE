@@ -14,11 +14,11 @@
 // 
 
 import artery.application.ItsG5Service;
-import BaseProtocol;
+//import BaseProtocol;
 import SubApplication;
-import BaseCommMode;
+//import BaseCommMode;
 import HybridApp;
-import Managment.Managment;
+
 
 module HybridService like ItsG5Service
 {
@@ -43,9 +43,9 @@ module HybridService like ItsG5Service
 
     submodules:
 
-        mode: <communication_mode> like BaseCommMode {
-            @display("p=189.675,21.6");
-        }
+        //mode: <communication_mode> like BaseCommMode {
+        //    @display("p=189.675,21.6");
+        //}
 
         mainApp: HybridApp {
 
@@ -59,9 +59,6 @@ module HybridService like ItsG5Service
             @display("p=63.45,43.2,row,50");
         }
 
-        managmentLayer: Managment {
-            @display("p=189.675,84.375");
-        }
 
 
 
