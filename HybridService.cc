@@ -123,8 +123,12 @@ void HybridService::initialize()
 	target_network->network_id = vehicle_id + "_target_Net" ;
 
 	// Loading nn parameters
-	torch::load(target_network, environment.pt_target);
-	torch::load(network, environment.pt_net);
+
+	std::string net_model_name = environment.pt_net + vehicle_id;
+	std::string target_model_name = environment.pt_target + vehicle_id;
+
+	torch::load(target_network, target_model_name);
+	torch::load(network, net_model_name);
     
 
 }
@@ -202,8 +206,14 @@ void HybridService::finish()
 		std::cout << "LIst Size " << std::to_string(receivedMessages.size()).c_str() << "\n";
 		std::cout << "epsilon = " << epsilon << " Messages = " << environment.number_messages << "\n";
 
-		torch::save(network, environment.pt_net);
-		torch::save(target_network, environment.pt_target);
+		mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();
+    	const std::string vehicle_id = mVehicleController->getVehicleId();
+
+		std::string net_model_name = environment.pt_net + vehicle_id;
+		std::string target_model_name = environment.pt_target + vehicle_id;
+
+		torch::save(network, net_model_name);
+		torch::save(target_network, target_model_name);
 	}
 }
 
@@ -569,6 +579,9 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 double HybridService::squarDistance(double xPosV1, double xPosV2, double yPosV1, double yPosV2)
 {
     return sqrt(pow(xPosV2 - xPosV1, 2) + pow (yPosV2 - yPosV1, 2));
+	// TODO:
+	// fix distance formula and fix the platooning decomposition
+	// return pow(xPosV1 - xPosV2, 2);
 }
 
 
