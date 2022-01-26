@@ -60,7 +60,9 @@ class HybridService : public artery::ItsG5Service
 		std::string csvFile;
         std::string csvFileSNIRLTE;
         std::string csvFileSNIRG5;
+        std::string csvFileR;
         int messageId = 0;
+        int nb_received_messsages = 0;
         int platoonId;
         int platoonSize = 0;
         double leader_speed = 0;
@@ -81,11 +83,12 @@ class HybridService : public artery::ItsG5Service
     private: std::string checkpoint;
     private: double epsilon = 1.0;
     private: double epsilon_min = 0.01;
-    private: double epsilon_decay = 5e-7;
+    private: double epsilon_decay = 1e-5;
     // private: float lr = 0.01;
     private: float gamma = 0.99;
     private: torch::optim::Adam optimizer;
     private: int action_space, observation_space;
+    double avg_reward = 0;
     
     private: int learn_step_counter = 0;
     private: int replace_target_cnt = 10000;

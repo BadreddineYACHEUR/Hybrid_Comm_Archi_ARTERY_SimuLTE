@@ -87,13 +87,16 @@ void HybridService::initialize()
 		csvFile = "results/" + vehicle_id + ".csv";
 		csvFileSNIRLTE = "results/SNIRLTE" + vehicle_id + ".csv";
 		csvFileSNIRG5 = "results/SNIRG5" + vehicle_id + ".csv";
+		csvFileR = "results/Reward" + vehicle_id + ".csv";
 
 		std::fstream file;
 		std::fstream fileLTE;
 		std::fstream fileG5;
+		std::fstream fileR;
 		file.open (csvFile, std::ios::app);
 		fileLTE.open (csvFileSNIRLTE, std::ios::app);
 		fileG5.open (csvFileSNIRG5, std::ios::app);
+		fileR.open (csvFileR, std::ios::app);
 			
 		if (file) {
         	file << "Sent" << ", " << "mode" << ", " << "Received" << ", " << "interface" << "\n";
@@ -109,6 +112,11 @@ void HybridService::initialize()
 			fileG5 << "SINR" << ", " << "PRR" << "\n";
 		}
 		fileG5.close();
+
+		if (fileR) {
+			fileR << "Reward" << "\n";
+		}
+		fileR.close();
 	}
 
     // Signals 
@@ -125,7 +133,6 @@ void HybridService::initialize()
 		target_network->network_id = vehicle_id + "_target_Net" ;
 
 		// Loading nn parameters
-
 		std::string net_model_name = environment.pt_net + vehicle_id;
 		std::string target_model_name = environment.pt_target + vehicle_id;
 
@@ -241,8 +248,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
 	        
 	    auto receivedMessage = sigMessage;
-
-	    // TODO: Add writing in file
+		nb_received_messsages++;
 
 	    std::list<std::string>::iterator it;
 	    bool is_received = false;
@@ -300,14 +306,20 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 			file.close();
 
 			std::tuple<double, bool> step_result = environment.step();
-
-			file.open(csvFileSNIRG5, std::ios::app);
-			if (file) {
-				file << "" << ", " << "" << "," << std::get<0>(step_result) << "\n";
-			}
-			file.close();
 			
-			store_transition(environment.state, environment.new_state, environment.choosen_action, std::get<0>(step_result), std::get<0>(step_result));
+			avg_reward += std::get<0>(step_result);
+
+			if(nb_received_messsages % 50 == 0){
+				file.open(csvFileR, std::ios::app);
+				if (file) {
+					file << avg_reward/50 << "\n";
+				}
+				file.close();
+				std::cout << nb_received_messsages << " " << avg_reward/50 << "\n";
+				avg_reward = 0 ;
+			}
+			
+			store_transition(environment.state, environment.new_state, environment.choosen_action, std::get<0>(step_result), std::get<1>(step_result));
 			learn();
 		}
 
@@ -667,7 +679,7 @@ void HybridService::learn(){
 
     const std::string vehicle_id = mVehicleController->getVehicleId();
 
-    //if(learn_step_counter % 1000 == 0)
+    if(learn_step_counter % 100 == 0)
         std::cout << "Agent " << vehicle_id << " is learning and epsilon = " << epsilon <<  "***************" << "And MEM cntr = " << agent_memory.get_mem_ctr() << "\n";
 
     optimizer.zero_grad();
