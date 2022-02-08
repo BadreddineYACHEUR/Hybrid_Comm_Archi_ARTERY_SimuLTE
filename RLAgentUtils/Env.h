@@ -20,13 +20,13 @@ struct Environment
     double min_snr_lte = 1;
     double max_snr_lte = 60;
 
-    double min_snr_its_g5 = 15;
-    double max_snr_its_g5 = 100;
+    double min_snr_its_g5 = 0.1;
+    double max_snr_its_g5 = 200;
 
     /* Channel specs */
     double prr_tresh = 0.9;
     double snr_tresh_lte = (12 - min_snr_lte) / (max_snr_lte - min_snr_lte);
-    double snr_tresh_g5 = (30 - min_snr_its_g5) / (max_snr_its_g5 - min_snr_its_g5);
+    double snr_tresh_g5 = (20 - min_snr_its_g5) / (max_snr_its_g5 - min_snr_its_g5);
 
 
     /* Reward parameters */
@@ -60,9 +60,12 @@ struct Environment
 
 
         double reward = this->reward();
+        done = false;
 
-        if(number_messages > 10000)
+        if(number_messages > 10000){
+            number_messages = 0;
             done = true;
+        }
         else
             number_messages++;
 
@@ -90,27 +93,27 @@ struct Environment
         snr_its_g5 = (snr_its_g5 <= max_snr_its_g5) ? ((snr_its_g5 - min_snr_its_g5) / (max_snr_its_g5 - min_snr_its_g5)) : 1; 
         snr_its_g5_ = (snr_its_g5_ <= max_snr_its_g5) ? ((snr_its_g5_ - min_snr_its_g5) / (max_snr_its_g5 - min_snr_its_g5)) : 1;
 
-        // std::cout << "snr = " << snr_tresh_lte << " " << snr_tresh_g5 << " " << snr_its_g5 << " " << snr_its_g5_ << " " << snr_lte << " " << snr_lte_ << "\n"; 
+        // std::cout << "snr = " << snr_tresh_lte << " " << snr_tresh_g5 << " " << snr_its_g5 << " " << snr_its_g5_ << " " << snr_lte << " " << snr_lte_ << " " << choosen_action <<  "\n"; 
 
 
         double reward_part_1, reward_part_2;
 
         if(choosen_action == 0){
             if((snr_its_g5 > snr_tresh_g5) && (snr_lte <= snr_tresh_lte))
-                reward_part_1 = snr_its_g5 - snr_tresh_g5;
+                reward_part_1 = 1 + (snr_its_g5 - snr_tresh_g5);
             else reward_part_1 = 0;
 
         }else if(choosen_action == 1){
             if(prr_lte > prr_tresh){
-                reward_part_1 = prr_lte - prr_tresh;
+                reward_part_1 = 1 + (prr_lte - prr_tresh);
                 if((snr_lte > snr_tresh_lte) && (snr_its_g5 <= snr_tresh_g5))
-                    reward_part_1 += snr_lte - snr_tresh_lte;
+                    reward_part_1 += (snr_lte - snr_tresh_lte);
             }
             else reward_part_1 = 0;
         }else{
-            if((snr_its_g5 <= snr_its_g5) && (snr_lte <= snr_tresh_lte))
+            if((snr_its_g5 <= snr_tresh_g5) && (snr_lte <= snr_tresh_lte))
                 reward_part_1 = 1;
-            else reward_part_1 = 0.1;
+            else reward_part_1 = 0;
         } 
 
         double diff_snr = (snr_its_g5_ - snr_its_g5) + (snr_lte_ - snr_lte);

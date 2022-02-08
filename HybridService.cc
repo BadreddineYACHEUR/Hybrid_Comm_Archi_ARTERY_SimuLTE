@@ -22,8 +22,6 @@
 #include "/home/byacheur/Apps/artery/src/artery/lte/Managment/Managment.h"
 
 
-
-
 using namespace omnetpp;
 using namespace vanetza;
 
@@ -32,6 +30,7 @@ Define_Module(HybridService)
 
 static const simsignal_t fromMainAppSignal = cComponent::registerSignal("toHybridServiceSignal");
 
+static int received_status[6][6] = {0};
 
 void HybridService::init(int input_dims, int num_actions, int hidden_dims){
         network = Net(input_dims, hidden_dims, num_actions);
@@ -43,7 +42,7 @@ void HybridService::init(int input_dims, int num_actions, int hidden_dims){
 
 HybridService::HybridService():optimizer(network->parameters(), torch::optim::AdamOptions(0.0001)){
 
-	this->init(environment.observation_space, 512, environment.action_space);
+	this->init(environment.observation_space, environment.action_space, 128);
 }
 
 void HybridService::initialize()
@@ -62,7 +61,6 @@ void HybridService::initialize()
     messageId = 0;
 
 
-
     if (vehicle_id.compare(0, 14, "platoon_leader") == 0){
 		role = LEADER;
 		platoonId = 0;
@@ -76,8 +74,9 @@ void HybridService::initialize()
 		mVehicleController->setSpeed(10 * boost::units::si::meter_per_second);
 
     }
-    else if (vehicle_id.compare(0, 16, "platoon_follower") == 0)
+    else if (vehicle_id.compare(0, 16, "platoon_follower") == 0){
         role = JOINER; 
+	}
     else if (vehicle_id.compare(0, 4, "free") == 0)
         role = FREE;
 
@@ -176,7 +175,6 @@ void HybridService::trigger()
         //std::cout << "Joiner sending message ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
 
         sendToMainApp(packet, id);
-
         messageId++;
     }
     else if ((role == FOLLOWER) || (role == LEADER))
@@ -250,6 +248,9 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	    auto receivedMessage = sigMessage;
 		nb_received_messsages++;
 
+
+		// Hit detection
+
 	    std::list<std::string>::iterator it;
 	    bool is_received = false;
 
@@ -266,10 +267,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
         if (is_received)
         {
-            //std::cout << "Hit ************** \n";
-            message_hits++;
-
-            
+            message_hits++;            
         }else{
 
 	    	if (role != FREE){
@@ -281,49 +279,15 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 		        }
 				file.close();
 	    	}
+			
 	    	receivedMessages.push_front(receivedMessage->getMessageId());
 
         }
 
+		// Environment Update
+
+		update_reception_state(platoonId, receivedMessage->getIdInPlatoon(), is_received);
         
-		// Update state of the environment and launch the learning process
-
-		if(messageId != 0){
-
-			environment.new_state = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, managmentLayer->PRR_LTE, managmentLayer->SINR_LTE, 0.99, 50.0});
-
-			std::fstream file;
-			file.open(csvFileSNIRG5, std::ios::app);
-			if (file) {
-				file << managmentLayer->SINR_ITS_G5 << ", " << "" << "\n";
-			}
-			file.close();
-
-			file.open(csvFileSNIRLTE, std::ios::app);
-			if (file) {
-				file << managmentLayer->SINR_LTE << ", " << managmentLayer->PRR_LTE << "\n";
-			}
-			file.close();
-
-			std::tuple<double, bool> step_result = environment.step();
-			
-			avg_reward += std::get<0>(step_result);
-
-			if(nb_received_messsages % 50 == 0){
-				file.open(csvFileR, std::ios::app);
-				if (file) {
-					file << avg_reward/50 << "\n";
-				}
-				file.close();
-				std::cout << nb_received_messsages << " " << avg_reward/50 << "\n";
-				avg_reward = 0 ;
-			}
-			
-			store_transition(environment.state, environment.new_state, environment.choosen_action, std::get<0>(step_result), std::get<1>(step_result));
-			learn();
-		}
-
-
 		// Message reception logic 
 
 	    auto& vehicle_api = mVehicleController->getLiteAPI().vehicle();
@@ -550,9 +514,44 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
 void HybridService::sendToMainApp(cMessage* msg, std::string id)
 {
-	//std::cout << "sending from HybridService to main App the following message: " << messageId << "\n";
-
 	auto msg_ = check_and_cast<PlatooningMessage*>(msg);
+	
+	// Update state of the environment and launch the learning process
+	
+	if(messageId != 0){
+
+		environment.new_state = torch::tensor({1.0, managmentLayer->SINR_ITS_G5_first, managmentLayer->PRR_LTE_first, managmentLayer->SINR_LTE_first, 0.99, 50.0});
+
+		std::tuple<double, bool> step_result = environment.step(); //TODO: update state
+		
+		avg_reward += std::get<0>(step_result);
+
+		if(nb_received_messsages % 50 == 0){
+			file.open(csvFileR, std::ios::app);
+			if (file) {
+				file << avg_reward/50 << "\n";
+			}
+			file.close();
+			std::cout << nb_received_messsages << " " << avg_reward/50 << "\n";
+			avg_reward = 0 ;
+		}
+		
+		store_transition(environment.state, environment.new_state, environment.choosen_action, std::get<0>(step_result), std::get<1>(step_result));
+		learn();
+
+		std::fstream file;
+		file.open(csvFileSNIRG5, std::ios::app);
+		if (file) {
+			file << managmentLayer->SINR_ITS_G5 << ", " << "" << "\n";
+		}
+		file.close();
+
+		file.open(csvFileSNIRLTE, std::ios::app);
+		if (file) {
+			file << managmentLayer->SINR_LTE << ", " << managmentLayer->PRR_LTE << "\n";
+		}
+		file.close();
+	}
 
 	// RL algo
 
@@ -561,27 +560,30 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 	// Getting stat parameters
 	torch::Tensor observation = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, managmentLayer->PRR_LTE, managmentLayer->SINR_LTE, 0.99, 50.0});
 	environment.state = observation;
-	
 	int action = choose_action(observation);
 	environment.choosen_action = action;
 	msg_->setSending_interface(action);
 
+	clear_reception_state(platoonId);
+
+
+
 	std::fstream file;
     file.open (csvFile, std::ios::app);
 
-    if (file) {
+    if (file){
     	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << action << ", " << "" << ", " << managmentLayer->SINR_ITS_G5 << ", " << managmentLayer->SINR_LTE << "," << environment.number_messages<< "\n";
     }
 	file.close();
 
 	file.open(csvFileSNIRG5, std::ios::app);
-	if (file) {
+	if (file){
 		file << managmentLayer->SINR_ITS_G5 << ", " << "" << "\n";
 	}
 	file.close();
 
 	file.open(csvFileSNIRLTE, std::ios::app);
-	if (file) {
+	if (file){
 		file << managmentLayer->SINR_LTE << ", " << managmentLayer->PRR_LTE << "\n";
 	}
 	file.close();
@@ -589,6 +591,21 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 	emit(toMainAppSignal, msg_);
 }
 
+void update_reception_state(int platoonId, int senderId, bool is_received){
+
+	if (is_received){
+		received_status[senderId][platoonId] = 2;
+	}else
+		received_status[senderId][platoonId] = 1;
+}
+
+void clear_reception_state(int platoonId){
+	
+    for(int i=0; i<6 ; i++){
+        received_status[platoonId][i] = 0;
+    }
+        
+}
 
 double HybridService::squarDistance(double xPosV1, double xPosV2, double yPosV1, double yPosV2)
 {

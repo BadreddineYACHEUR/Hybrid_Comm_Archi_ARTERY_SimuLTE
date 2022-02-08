@@ -35,6 +35,7 @@ class HybridService : public artery::ItsG5Service
         void decrement_epsilon();
 		
 		void learn();
+ 
 
 	protected:
 		enum V_ROLE {FREE, LEADER, FOLLOWER, JOINER};
@@ -46,7 +47,8 @@ class HybridService : public artery::ItsG5Service
 		void CACCSpeedControl(std::string vehicle_id, double desired_speed, double vehicle_speed);
         void CACCGapControl(std::string vehicle_id, std::string pre_vehicle_id, double vehicle_speed, double preceding_vehicle_speed, double distance, double vehicle_accel);
         double squarDistance(double xPosV1, double xPosV2, double yPosV1, double yPosV2);
-
+        void update_reception_state(int platoonId, int senderId, bool is_received);
+        void clear_reception_state(int platoonId);
         // Dup Messages Managment
 
         std::list <std::string> receivedMessages;
@@ -83,7 +85,7 @@ class HybridService : public artery::ItsG5Service
     private: std::string checkpoint;
     private: double epsilon = 1.0;
     private: double epsilon_min = 0.01;
-    private: double epsilon_decay = 1e-5;
+    private: double epsilon_decay = 3e-5;
     // private: float lr = 0.01;
     private: float gamma = 0.99;
     private: torch::optim::Adam optimizer;
