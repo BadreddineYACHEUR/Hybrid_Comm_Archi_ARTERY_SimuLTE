@@ -47,8 +47,7 @@ class HybridService : public artery::ItsG5Service
 		void CACCSpeedControl(std::string vehicle_id, double desired_speed, double vehicle_speed);
         void CACCGapControl(std::string vehicle_id, std::string pre_vehicle_id, double vehicle_speed, double preceding_vehicle_speed, double distance, double vehicle_accel);
         double squarDistance(double xPosV1, double xPosV2, double yPosV1, double yPosV2);
-        void update_reception_state(int platoonId, int senderId, bool is_received);
-        void clear_reception_state(int platoonId);
+        
         // Dup Messages Managment
 
         std::list <std::string> receivedMessages;
@@ -83,9 +82,9 @@ class HybridService : public artery::ItsG5Service
 	private: Net network;
 	private: Net target_network;
     private: std::string checkpoint;
-    private: double epsilon = 1.0;
+    private: double epsilon = 0.9;
     private: double epsilon_min = 0.01;
-    private: double epsilon_decay = 3e-5;
+    private: double epsilon_decay = 8e-5;
     // private: float lr = 0.01;
     private: float gamma = 0.99;
     private: torch::optim::Adam optimizer;
@@ -95,7 +94,7 @@ class HybridService : public artery::ItsG5Service
     private: int learn_step_counter = 0;
     private: int replace_target_cnt = 10000;
     private: int batch_size = 32;
-    private: int mem_max = 22000;
+    private: int mem_max = 20000;
     
     private: Memory agent_memory;
     private: Environment environment;

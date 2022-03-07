@@ -30,8 +30,6 @@ Define_Module(HybridService)
 
 static const simsignal_t fromMainAppSignal = cComponent::registerSignal("toHybridServiceSignal");
 
-static int received_status[6][6] = {0};
-
 void HybridService::init(int input_dims, int num_actions, int hidden_dims){
         network = Net(input_dims, hidden_dims, num_actions);
         target_network = Net(input_dims, hidden_dims, num_actions);
@@ -197,12 +195,10 @@ void HybridService::trigger()
     }
 }
 
-
 void HybridService::indicate(const btp::DataIndication& ind, cPacket* packet)
 {
 
 }
-
 
 void HybridService::finish()
 {
@@ -211,7 +207,6 @@ void HybridService::finish()
 		
 		std::cout << "Hits " << std::to_string(message_hits).c_str() << "\n"; 
 		std::cout << "LIst Size " << std::to_string(receivedMessages.size()).c_str() << "\n";
-		std::cout << "epsilon = " << epsilon << " Messages = " << environment.number_messages << "\n";
 
 		mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();
     	const std::string vehicle_id = mVehicleController->getVehicleId();
@@ -286,7 +281,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
 		// Environment Update
 
-		update_reception_state(platoonId, receivedMessage->getIdInPlatoon(), is_received);
+		environment.update_reception_state(platoonId, receivedMessage->getIdInPlatoon(), is_received);
         
 		// Message reception logic 
 
@@ -341,7 +336,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	            }else
 	            {
 	                platoonSize++;
-	                std::cout << "platoon size: " << platoonSize << ", adding: " << receivedMessage->getVehicleId() <<"\n";
+	                //std::cout << "platoon size: " << platoonSize << ", adding: " << receivedMessage->getVehicleId() <<"\n";
 	                
 	                platoonMember follower;
 	                follower.vehicleId = receivedMessage->getVehicleId();
@@ -515,47 +510,46 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 void HybridService::sendToMainApp(cMessage* msg, std::string id)
 {
 	auto msg_ = check_and_cast<PlatooningMessage*>(msg);
-	
+	std::fstream file;
+
 	// Update state of the environment and launch the learning process
 	
 	if(messageId != 0){
 
 		environment.new_state = torch::tensor({1.0, managmentLayer->SINR_ITS_G5_first, managmentLayer->PRR_LTE_first, managmentLayer->SINR_LTE_first, 0.99, 50.0});
 
-		std::tuple<double, bool> step_result = environment.step(); //TODO: update state
+		std::tuple<double, bool> step_result = environment.step(platoonId);
 		
 		avg_reward += std::get<0>(step_result);
 
-		if(nb_received_messsages % 50 == 0){
+		if(std::get<1>(step_result)){
 			file.open(csvFileR, std::ios::app);
 			if (file) {
-				file << avg_reward/50 << "\n";
+				file << avg_reward/environment.number_steps << ", " << environment.number_steps << "\n";
 			}
 			file.close();
-			std::cout << nb_received_messsages << " " << avg_reward/50 << "\n";
-			avg_reward = 0 ;
+			std::cout << "REWARD :  " << avg_reward/environment.number_steps << " STEPS: " << environment.number_steps << "   ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **\n";
+			avg_reward = 0;
+			environment.init();
 		}
 		
 		store_transition(environment.state, environment.new_state, environment.choosen_action, std::get<0>(step_result), std::get<1>(step_result));
 		learn();
 
-		std::fstream file;
 		file.open(csvFileSNIRG5, std::ios::app);
 		if (file) {
-			file << managmentLayer->SINR_ITS_G5 << ", " << "" << "\n";
+			file << environment.new_state[1].item().toDouble() - environment.state[1].item().toDouble() << ", " << "" << "\n";
 		}
 		file.close();
 
 		file.open(csvFileSNIRLTE, std::ios::app);
 		if (file) {
-			file << managmentLayer->SINR_LTE << ", " << managmentLayer->PRR_LTE << "\n";
+			file << environment.new_state[3].item().toDouble() - environment.state[3].item().toDouble() << ", " << managmentLayer->PRR_LTE << "\n";
 		}
 		file.close();
 	}
 
-	// RL algo
-
-	bool done = false;
+	// Proceding state ancd doing the action
 
 	// Getting stat parameters
 	torch::Tensor observation = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, managmentLayer->PRR_LTE, managmentLayer->SINR_LTE, 0.99, 50.0});
@@ -564,48 +558,19 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 	environment.choosen_action = action;
 	msg_->setSending_interface(action);
 
-	clear_reception_state(platoonId);
+	environment.clear_reception_state(platoonId);
 
 
-
-	std::fstream file;
     file.open (csvFile, std::ios::app);
 
     if (file){
-    	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << action << ", " << "" << ", " << managmentLayer->SINR_ITS_G5 << ", " << managmentLayer->SINR_LTE << "," << environment.number_messages<< "\n";
+    	file << simTime() << ("_" + id + "_" + std::to_string(messageId)).c_str() << ", " << action << "\n";
     }
-	file.close();
-
-	file.open(csvFileSNIRG5, std::ios::app);
-	if (file){
-		file << managmentLayer->SINR_ITS_G5 << ", " << "" << "\n";
-	}
-	file.close();
-
-	file.open(csvFileSNIRLTE, std::ios::app);
-	if (file){
-		file << managmentLayer->SINR_LTE << ", " << managmentLayer->PRR_LTE << "\n";
-	}
 	file.close();
 
 	emit(toMainAppSignal, msg_);
 }
 
-void update_reception_state(int platoonId, int senderId, bool is_received){
-
-	if (is_received){
-		received_status[senderId][platoonId] = 2;
-	}else
-		received_status[senderId][platoonId] = 1;
-}
-
-void clear_reception_state(int platoonId){
-	
-    for(int i=0; i<6 ; i++){
-        received_status[platoonId][i] = 0;
-    }
-        
-}
 
 double HybridService::squarDistance(double xPosV1, double xPosV2, double yPosV1, double yPosV2)
 {
