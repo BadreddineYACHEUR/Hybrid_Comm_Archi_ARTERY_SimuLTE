@@ -94,35 +94,37 @@ double Environment::reward(int platonId){
     }
 
     // Reward on good behavior 
-    double reward_part_1;
+    double reward_part_1 = 0;
 
     if(choosen_action == 0){
-        if((snr_its_g5 > snr_tresh_g5) && (snr_lte <= snr_tresh_lte))
-            reward_part_1 = (snr_its_g5 - snr_tresh_g5);
+        if(snr_its_g5 < snr_tresh_g5)
+            reward_part_1 -= (snr_tresh_g5 - snr_its_g5);
         else reward_part_1 = 0;
 
     }else if(choosen_action == 1){
-        if(prr_lte > prr_tresh){
-            reward_part_1 = (prr_lte - prr_tresh);
-            if((snr_lte > snr_tresh_lte) && (snr_its_g5 <= snr_tresh_g5))
-                reward_part_1 += (snr_lte - snr_tresh_lte);
+        if(prr_lte < prr_tresh){
+            reward_part_1 -= (prr_tresh - prr_lte);
+            if(snr_lte < snr_tresh_lte)
+                reward_part_1 -= (snr_tresh_lte - snr_lte);
         }
         else reward_part_1 = 0;
     }else{
-        if((snr_its_g5 <= snr_tresh_g5) && (snr_lte <= snr_tresh_lte))
-            reward_part_1 = 0.1;
+        if((snr_its_g5 > snr_tresh_g5) || (snr_lte > snr_tresh_lte))
+            reward_part_1 -= 0.1;
         else reward_part_1 = 0;
     } 
 
-    // Reward on state changes
-    double reward_part_2;
+    // Reward on Net performance
+    double reward_part_2 = 0;
 
-    double diff_snr = (snr_its_g5_ - snr_its_g5) + (snr_lte_ - snr_lte);
-    reward_part_2 = diff_snr;
+    if(snr_its_g5_ < snr_its_g5)
+        reward_part_2 -= (snr_its_g5 - snr_its_g5_);
+    if(snr_lte_ < snr_lte)
+        reward_part_2 -= (snr_lte - snr_lte_)
 
     // Summarized reward
     double reward = (0.8 * reward_part_0) + (0.2 * (beta * reward_part_1 + alpha * reward_part_2));
-    //std::cout << "reward in step: " << reward_part_0 << " " << reward_part_1 << " " << reward_part_2 << "\n";
+    std::cout << "reward in step: " << reward_part_0 << " " << reward_part_1 << " " << reward_part_2 << "\n";
     
     // Return the reward
     return reward;

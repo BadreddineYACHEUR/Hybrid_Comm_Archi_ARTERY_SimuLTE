@@ -149,50 +149,54 @@ void HybridService::trigger()
     const std::string id = mVehicleController->getVehicleId();
     auto& vehicle_api = mVehicleController->getLiteAPI().vehicle();
 
-    auto packet = new PlatooningMessage();
-    packet->setVehicleId(id.c_str());
-    packet->setMessageId((id + "_" + std::to_string(messageId)).c_str());
+	if(simTime() > 100){
 
-    //std::cout << "ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
+		auto packet = new PlatooningMessage();
+		packet->setVehicleId(id.c_str());
+		packet->setMessageId((id + "_" + std::to_string(messageId)).c_str());
 
-    packet->setPositionX(mVehicleController->getPosition().x / meter);
-    packet->setPositionY(mVehicleController->getPosition().y / meter);
-    packet->setEdgeName(vehicle_api.getRoadID(id).c_str());
-    packet->setLaneIndex(vehicle_api.getLaneIndex(id));
-    packet->setSpeed(mVehicleController->getSpeed() / meter_per_second);
-    packet->setTime(simTime());
+		//std::cout << "ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
 
-    
-    if (role == JOINER)
-    {
-        // the "1" message type is for join request
-        packet->setMessageType(1);
+		packet->setPositionX(mVehicleController->getPosition().x / meter);
+		packet->setPositionY(mVehicleController->getPosition().y / meter);
+		packet->setEdgeName(vehicle_api.getRoadID(id).c_str());
+		packet->setLaneIndex(vehicle_api.getLaneIndex(id));
+		packet->setSpeed(mVehicleController->getSpeed() / meter_per_second);
+		packet->setTime(simTime());
 
-        packet->setByteLength(50);
+		
+		if (role == JOINER)
+		{
+			// the "1" message type is for join request
+			packet->setMessageType(1);
 
-        //std::cout << "Joiner sending message ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
+			packet->setByteLength(50);
 
-        sendToMainApp(packet, id);
-        messageId++;
-    }
-    else if ((role == FOLLOWER) || (role == LEADER))
-    {
-        // the "0" message type is platoon beacons
+			//std::cout << "Joiner sending message ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
 
-        packet->setMessageType(0);
-        packet->setPlatoonId(0);
-        packet->setIdInPlatoon(platoonId);
-        packet->setPlatoonSize(platoonSize);
+			sendToMainApp(packet, id);
+			messageId++;
+		}
+		else if ((role == FOLLOWER) || (role == LEADER))
+		{
+			// the "0" message type is platoon beacons
 
-        packet->setByteLength(50);
+			packet->setMessageType(0);
+			packet->setPlatoonId(0);
+			packet->setIdInPlatoon(platoonId);
+			packet->setPlatoonSize(platoonSize);
 
-        sendToMainApp(packet, id);
-            
-        messageId++;
-    }
-    else if (role == FREE)
-    {
-    }
+			packet->setByteLength(50);
+
+			sendToMainApp(packet, id);
+				
+			messageId++;
+		}
+		else if (role == FREE)
+		{
+		}
+
+	}
 }
 
 void HybridService::indicate(const btp::DataIndication& ind, cPacket* packet)
@@ -238,11 +242,9 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
         using boost::units::si::meter;
 	    using boost::units::si::meter_per_second;
 	    using boost::units::si::meter_per_second_squared;
-
 	        
 	    auto receivedMessage = sigMessage;
 		nb_received_messsages++;
-
 
 		// Hit detection
 
@@ -356,7 +358,6 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	            // Platooning message received type 0
 	        }
 	    }
-	  
 
 	    if (role == JOINER){
 
@@ -393,8 +394,7 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
 	                    if ((distance > 21) && (xPosV2 > xPosV1))
 	                    {
-	                        // std::cout << "> 20\n";
-	                        
+	                        // std::cout << "> 20\n"; 
 	                        mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
 	                    }
 	                    else if (((distance < 21) && (distance > 19)) && (xPosV2 > xPosV1)) {
@@ -449,7 +449,6 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 					xPosV1 = xPosV1 * -1;
 				}
 
-
 	            if ((distance > 21) && (xPosV2 > xPosV1))
 	            {
 	                //std::cout << "> 20\n";
@@ -498,10 +497,8 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	            vehicle_api.changeLane(id, pow(receivedMessage->getLaneIndex() - 1, 2), 2);
 	        }
 	        //mVehicleController->setSpeed(10 * meter_per_second);
-
 	    }
 	    
-
 	    delete receivedMessage;      
     }
 }
@@ -528,7 +525,7 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 				file << avg_reward/environment.number_steps << ", " << environment.number_steps << "\n";
 			}
 			file.close();
-			std::cout << "REWARD :  " << avg_reward/environment.number_steps << " STEPS: " << environment.number_steps << "   ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **\n";
+			std::cout << "REWARD: " << avg_reward/environment.number_steps << " STEPS: " << environment.number_steps << "   ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **\n";
 			avg_reward = 0;
 			environment.init();
 		}
@@ -661,8 +658,16 @@ void HybridService::learn(){
 
     const std::string vehicle_id = mVehicleController->getVehicleId();
 
-    if(learn_step_counter % 100 == 0)
+    if(learn_step_counter % 100 == 0){
+
+		std::string net_model_name = environment.pt_net + vehicle_id;
+		std::string target_model_name = environment.pt_target + vehicle_id;
+
+		torch::save(network, net_model_name);
+		torch::save(target_network, target_model_name);
+
         std::cout << "Agent " << vehicle_id << " is learning and epsilon = " << epsilon <<  "***************" << "And MEM cntr = " << agent_memory.get_mem_ctr() << "\n";
+	}
 
     optimizer.zero_grad();
 

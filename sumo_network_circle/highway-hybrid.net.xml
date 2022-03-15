@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on mar. 14 déc. 2021 19:12:13 by Eclipse SUMO netedit Version 1.8.0
+<!-- generated on mar. 15 mars 2022 09:54:21 by Eclipse SUMO netedit Version 1.8.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
-        <sumo-net-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network%20(copy)/highway-hybrid.net.xml"/>
+        <sumo-net-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network_circle/highway-hybrid.net.xml"/>
     </input>
 
     <output>
-        <output-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network%20(copy)/highway-hybrid.net.xml"/>
+        <output-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network_circle/highway-hybrid.net.xml"/>
     </output>
 
     <processing>
@@ -30,11 +30,6 @@
         <walkingareas value="false"/>
     </pedestrian>
 
-    <netedit>
-        <additional-files value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network%20(copy)/circle.add.xml"/>
-        <route-files value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network%20(copy)/highway-hybrid.rou.xml"/>
-    </netedit>
-
     <report>
         <aggregate-warnings value="5"/>
     </report>
@@ -46,21 +41,21 @@
 
     <location netOffset="0.00,0.00" convBoundary="-3000.00,-1064.47,339.90,-1000.00" origBoundary="-10000000000.00,-10000000000.00,10000000000.00,10000000000.00" projParameter="!"/>
 
-    <edge id="-edge1" from="jun1" to="jun2" priority="-1">
-        <lane id="-edge1_0" index="0" speed="13.89" length="3308.64" shape="-2964.73,-1069.27 328.41,-1069.27"/>
-        <lane id="-edge1_1" index="1" speed="13.89" length="3308.64" shape="-2964.73,-1066.07 328.41,-1066.07"/>
+    <edge id="-edge1" from="jun1" to="jun2" priority="-1" length="1000.00">
+        <lane id="-edge1_0" index="0" speed="13.89" length="1000.00" shape="-2964.73,-1069.27 328.41,-1069.27"/>
+        <lane id="-edge1_1" index="1" speed="13.89" length="1000.00" shape="-2964.73,-1066.07 328.41,-1066.07"/>
     </edge>
-    <edge id="edge1" from="jun2" to="jun1" priority="-1">
-        <lane id="edge1_0" index="0" speed="13.89" length="3308.64" shape="328.41,-1059.67 -2964.73,-1059.67"/>
-        <lane id="edge1_1" index="1" speed="13.89" length="3308.64" shape="328.41,-1062.87 -2964.73,-1062.87"/>
+    <edge id="edge1" from="jun2" to="jun1" priority="-1" length="1000.00">
+        <lane id="edge1_0" index="0" speed="13.89" length="1000.00" shape="328.41,-1059.67 -2964.73,-1059.67"/>
+        <lane id="edge1_1" index="1" speed="13.89" length="1000.00" shape="328.41,-1062.87 -2964.73,-1062.87"/>
     </edge>
     <edge id="gneE1" from="jun2" to="gneJ1" priority="-1">
         <lane id="gneE1_0" index="0" speed="13.89" length="75.82" shape="337.94,-1052.18 305.96,-1000.51"/>
         <lane id="gneE1_1" index="1" speed="13.89" length="75.82" shape="335.22,-1053.86 303.24,-1002.19"/>
     </edge>
-    <edge id="gneE2" from="gneJ1" to="gneJ4" priority="-1">
-        <lane id="gneE2_0" index="0" speed="13.89" length="3300.00" shape="296.43,-995.20 -2989.78,-995.20"/>
-        <lane id="gneE2_1" index="1" speed="13.89" length="3300.00" shape="296.43,-998.40 -2989.78,-998.40"/>
+    <edge id="gneE2" from="gneJ1" to="gneJ4" priority="-1" length="1000.00">
+        <lane id="gneE2_0" index="0" speed="13.89" length="1000.00" shape="296.43,-995.20 -2989.78,-995.20"/>
+        <lane id="gneE2_1" index="1" speed="13.89" length="1000.00" shape="296.43,-998.40 -2989.78,-998.40"/>
     </edge>
     <edge id="gneE3" from="gneJ4" to="jun1" priority="-1" shape="-3000.00,-1000.00 -2991.07,-1018.41 -2968.74,-1064.47">
         <lane id="gneE3_0" index="0" speed="13.89" length="71.65" shape="-2999.86,-1011.29 -2995.39,-1020.50 -2974.81,-1062.96"/>
@@ -70,9 +65,9 @@
         <lane id="gneE4_0" index="0" speed="13.89" length="71.65" shape="-2966.17,-1058.77 -2991.22,-1007.10"/>
         <lane id="gneE4_1" index="1" speed="13.89" length="71.65" shape="-2969.05,-1060.16 -2994.10,-1008.49"/>
     </edge>
-    <edge id="gneE5" from="gneJ4" to="gneJ1" priority="-1">
-        <lane id="gneE5_0" index="0" speed="13.89" length="3300.00" shape="-2989.78,-1004.80 296.43,-1004.80"/>
-        <lane id="gneE5_1" index="1" speed="13.89" length="3300.00" shape="-2989.78,-1001.60 296.43,-1001.60"/>
+    <edge id="gneE5" from="gneJ4" to="gneJ1" priority="-1" length="1000.00">
+        <lane id="gneE5_0" index="0" speed="13.89" length="1000.00" shape="-2989.78,-1004.80 296.43,-1004.80"/>
+        <lane id="gneE5_1" index="1" speed="13.89" length="1000.00" shape="-2989.78,-1001.60 296.43,-1001.60"/>
     </edge>
     <edge id="gneE6" from="gneJ1" to="jun2" priority="-1">
         <lane id="gneE6_0" index="0" speed="13.89" length="75.82" shape="297.79,-1005.56 329.77,-1057.23"/>
