@@ -43,17 +43,18 @@
 -->
 
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
-    <vType id="platoonLeader" length="2" maxSpeed="20" minGap="0.5" speedFactor="1"/> 
+    <vType id="platoonLeader" length="2" maxSpeed="5" minGap="0" speedFactor="1"/> 
 
-    <vType id="platoonFollower" length="2" maxSpeed="40" carFollowModel="CACC" minGap="0.5" speedFactor="1.5"/> 
+    <vType id="platoonFollower" length="2" maxSpeed="10" carFollowModel="CACC" minGap="0" speedFactor="1"/> 
 
     <vType id="free" length="2" maxSpeed="30" minGap="0.5" speedFactor="0.5" lcKeepRight="0"/>
 
     <route edges="-edge1 gneE1 gneE2" color="yellow" id="route_0"/>
     <route edges="edge1 gneE4 gneE5" color="cyan" id="route_1"/>
-    <flow id="free_flow_0" type="free" begin="0.00" color="blue" route="route_0" period="0.85" departSpeed="9.77"/>
-    <flow id="free_flow_1" type="free" begin="0.00" route="route_1" period="0.85" departSpeed="9.77"/>
-    <vehicle id="platoon_leader" depart="20.00" departSpeed="10" color="yellow" type="platoonLeader" route="route_0"/>
-    
-    <flow id="platoon_follower" begin="25.00" departSpeed="10" type="platoonFollower" color="red" number="5" vehsPerHour="1000" departLane="1" route="route_0" />
+
+    <!--<flow id="free_flow_0" type="free" begin="0.00" color="blue" route="route_0" period="0.85" departSpeed="9.77"/>
+    <flow id="free_flow_1" type="free" begin="0.00" route="route_1" period="0.85" departSpeed="9.77"/> -->
+
+    <vehicle id="platoon_leader" depart="15.00" departSpeed="1" color="yellow" type="platoonLeader" route="route_0"/>    
+    <flow id="platoon_follower" begin="25.00" departSpeed="1" type="platoonFollower" color="red" number="5" vehsPerHour="1000" departLane="1" route="route_0" />
 </routes>

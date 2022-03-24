@@ -30,8 +30,8 @@ class Environment
         double snr_tresh_g5 = (20 - min_snr_its_g5) / (max_snr_its_g5 - min_snr_its_g5);
 
         /* Reward parameters */
-        double alpha = 0.2;
-        double beta = 0.8;
+        double alpha = 0.8;
+        double beta = 0.2;
 
         /* Model saving files */
         std::string pt_net = "net_model.pt";

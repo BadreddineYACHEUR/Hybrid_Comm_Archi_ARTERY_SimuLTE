@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on mar. 15 mars 2022 09:54:21 by Eclipse SUMO netedit Version 1.8.0
+<!-- generated on ven. 18 mars 2022 19:14:11 by Eclipse SUMO netedit Version 1.8.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
@@ -49,29 +49,29 @@
         <lane id="edge1_0" index="0" speed="13.89" length="1000.00" shape="328.41,-1059.67 -2964.73,-1059.67"/>
         <lane id="edge1_1" index="1" speed="13.89" length="1000.00" shape="328.41,-1062.87 -2964.73,-1062.87"/>
     </edge>
-    <edge id="gneE1" from="jun2" to="gneJ1" priority="-1">
-        <lane id="gneE1_0" index="0" speed="13.89" length="75.82" shape="337.94,-1052.18 305.96,-1000.51"/>
-        <lane id="gneE1_1" index="1" speed="13.89" length="75.82" shape="335.22,-1053.86 303.24,-1002.19"/>
+    <edge id="gneE1" from="jun2" to="gneJ1" priority="-1" length="20.00">
+        <lane id="gneE1_0" index="0" speed="13.89" length="20.00" shape="337.94,-1052.18 305.96,-1000.51"/>
+        <lane id="gneE1_1" index="1" speed="13.89" length="20.00" shape="335.22,-1053.86 303.24,-1002.19"/>
     </edge>
     <edge id="gneE2" from="gneJ1" to="gneJ4" priority="-1" length="1000.00">
         <lane id="gneE2_0" index="0" speed="13.89" length="1000.00" shape="296.43,-995.20 -2989.78,-995.20"/>
         <lane id="gneE2_1" index="1" speed="13.89" length="1000.00" shape="296.43,-998.40 -2989.78,-998.40"/>
     </edge>
-    <edge id="gneE3" from="gneJ4" to="jun1" priority="-1" shape="-3000.00,-1000.00 -2991.07,-1018.41 -2968.74,-1064.47">
-        <lane id="gneE3_0" index="0" speed="13.89" length="71.65" shape="-2999.86,-1011.29 -2995.39,-1020.50 -2974.81,-1062.96"/>
-        <lane id="gneE3_1" index="1" speed="13.89" length="71.65" shape="-2996.98,-1009.89 -2992.51,-1019.11 -2971.93,-1061.56"/>
+    <edge id="gneE3" from="gneJ4" to="jun1" priority="-1" length="20.00" shape="-3000.00,-1000.00 -2991.07,-1018.41 -2968.74,-1064.47">
+        <lane id="gneE3_0" index="0" speed="13.89" length="20.00" shape="-2999.86,-1011.29 -2995.39,-1020.50 -2974.81,-1062.96"/>
+        <lane id="gneE3_1" index="1" speed="13.89" length="20.00" shape="-2996.98,-1009.89 -2992.51,-1019.11 -2971.93,-1061.56"/>
     </edge>
-    <edge id="gneE4" from="jun1" to="gneJ4" priority="-1">
-        <lane id="gneE4_0" index="0" speed="13.89" length="71.65" shape="-2966.17,-1058.77 -2991.22,-1007.10"/>
-        <lane id="gneE4_1" index="1" speed="13.89" length="71.65" shape="-2969.05,-1060.16 -2994.10,-1008.49"/>
+    <edge id="gneE4" from="jun1" to="gneJ4" priority="-1" length="20.00">
+        <lane id="gneE4_0" index="0" speed="13.89" length="20.00" shape="-2966.17,-1058.77 -2991.22,-1007.10"/>
+        <lane id="gneE4_1" index="1" speed="13.89" length="20.00" shape="-2969.05,-1060.16 -2994.10,-1008.49"/>
     </edge>
     <edge id="gneE5" from="gneJ4" to="gneJ1" priority="-1" length="1000.00">
         <lane id="gneE5_0" index="0" speed="13.89" length="1000.00" shape="-2989.78,-1004.80 296.43,-1004.80"/>
         <lane id="gneE5_1" index="1" speed="13.89" length="1000.00" shape="-2989.78,-1001.60 296.43,-1001.60"/>
     </edge>
-    <edge id="gneE6" from="gneJ1" to="jun2" priority="-1">
-        <lane id="gneE6_0" index="0" speed="13.89" length="75.82" shape="297.79,-1005.56 329.77,-1057.23"/>
-        <lane id="gneE6_1" index="1" speed="13.89" length="75.82" shape="300.52,-1003.87 332.49,-1055.54"/>
+    <edge id="gneE6" from="gneJ1" to="jun2" priority="-1" length="20.00">
+        <lane id="gneE6_0" index="0" speed="13.89" length="20.00" shape="297.79,-1005.56 329.77,-1057.23"/>
+        <lane id="gneE6_1" index="1" speed="13.89" length="20.00" shape="300.52,-1003.87 332.49,-1055.54"/>
     </edge>
 
     <junction id="gneJ1" type="priority" x="300.00" y="-1000.00" incLanes="gneE1_0 gneE1_1 gneE5_0 gneE5_1" intLanes="" shape="307.32,-999.66 296.43,-1006.40 296.43,-993.60 298.72,-993.77 300.81,-994.27 302.72,-995.12 304.44,-996.30 305.97,-997.81">

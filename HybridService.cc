@@ -51,7 +51,6 @@ void HybridService::initialize()
 	mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();
     const std::string vehicle_id = mVehicleController->getVehicleId();
 	managmentLayer = check_and_cast<artery::Managment::Managment*>(this->getParentModule()->getParentModule()->getSubmodule("managmentLayer"));
-    leader_speed = 10; 
 
     //writePRInfo(csvFile, "Sent", "Received");
 
@@ -63,13 +62,11 @@ void HybridService::initialize()
 		role = LEADER;
 		platoonId = 0;
 		platoonSize = 1;
-		leader_speed = 10;
 
 		platoonMember leader;
 		leader.vehicleId = vehicle_id;
 		leader.idInPlatoon = 0;
 		platoonMembers = {leader};
-		mVehicleController->setSpeed(10 * boost::units::si::meter_per_second);
 
     }
     else if (vehicle_id.compare(0, 16, "platoon_follower") == 0){
@@ -149,54 +146,52 @@ void HybridService::trigger()
     const std::string id = mVehicleController->getVehicleId();
     auto& vehicle_api = mVehicleController->getLiteAPI().vehicle();
 
-	if(simTime() > 100){
 
-		auto packet = new PlatooningMessage();
-		packet->setVehicleId(id.c_str());
-		packet->setMessageId((id + "_" + std::to_string(messageId)).c_str());
+	auto packet = new PlatooningMessage();
+	packet->setVehicleId(id.c_str());
+	packet->setMessageId((id + "_" + std::to_string(messageId)).c_str());
 
-		//std::cout << "ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
+	//std::cout << "ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
 
-		packet->setPositionX(mVehicleController->getPosition().x / meter);
-		packet->setPositionY(mVehicleController->getPosition().y / meter);
-		packet->setEdgeName(vehicle_api.getRoadID(id).c_str());
-		packet->setLaneIndex(vehicle_api.getLaneIndex(id));
-		packet->setSpeed(mVehicleController->getSpeed() / meter_per_second);
-		packet->setTime(simTime());
+	packet->setPositionX(mVehicleController->getPosition().x / meter);
+	packet->setPositionY(mVehicleController->getPosition().y / meter);
+	packet->setEdgeName(vehicle_api.getRoadID(id).c_str());
+	packet->setLaneIndex(vehicle_api.getLaneIndex(id));
+	packet->setSpeed(mVehicleController->getSpeed() / meter_per_second);
+	packet->setTime(simTime());
 
-		
-		if (role == JOINER)
-		{
-			// the "1" message type is for join request
-			packet->setMessageType(1);
+	
+	if (role == JOINER)
+	{
+		// the "1" message type is for join request
+		packet->setMessageType(1);
 
-			packet->setByteLength(50);
+		packet->setByteLength(50);
 
-			//std::cout << "Joiner sending message ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
+		//std::cout << "Joiner sending message ID: " << id.c_str() << " speed: " << mVehicleController->getSpeed() / meter_per_second << "\n";
 
-			sendToMainApp(packet, id);
-			messageId++;
-		}
-		else if ((role == FOLLOWER) || (role == LEADER))
-		{
-			// the "0" message type is platoon beacons
-
-			packet->setMessageType(0);
-			packet->setPlatoonId(0);
-			packet->setIdInPlatoon(platoonId);
-			packet->setPlatoonSize(platoonSize);
-
-			packet->setByteLength(50);
-
-			sendToMainApp(packet, id);
-				
-			messageId++;
-		}
-		else if (role == FREE)
-		{
-		}
-
+		sendToMainApp(packet, id);
+		messageId++;
 	}
+	else if ((role == FOLLOWER) || (role == LEADER))
+	{
+		// the "0" message type is platoon beacons
+
+		packet->setMessageType(0);
+		packet->setPlatoonId(0);
+		packet->setIdInPlatoon(platoonId);
+		packet->setPlatoonSize(platoonSize);
+
+		packet->setByteLength(50);
+
+		sendToMainApp(packet, id);
+			
+		messageId++;
+	}
+	else if (role == FREE)
+	{
+	}
+
 }
 
 void HybridService::indicate(const btp::DataIndication& ind, cPacket* packet)
@@ -319,15 +314,13 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 
 	            std::list<platoonMember>::iterator it;
 	            for(it = platoonMembers.begin(); it != platoonMembers.end(); ++it)
-	            {
-	                
+	            { 
 	                if (it->vehicleId.compare(receivedMessage->getVehicleId()) == 0)
 	                {
 	                    found_id = it->idInPlatoon;
 	                    is_in_platoon = true;
 	                    break;
 	                }
-	                
 	            }
 
 	            if (is_in_platoon)
@@ -360,7 +353,6 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	    }
 
 	    if (role == JOINER){
-
 	        
 	        if (receivedMessage->getMessageType() == 2) // Type 2 is a join response 
 	            if ((receivedMessage->getAccepted()) && (std::string(receivedMessage->getJoinerId()).compare(id) == 0))
@@ -386,29 +378,29 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	                    double yPosV2 = receivedMessage->getPositionY();
 	                    
 	                    double vehicle_accel = vehicle_api.getAcceleration(id);
-	                    vehicle_api.changeLane(id, 1, 2);
 	                    
 	 
 	                    double distance = squarDistance(xPosV1, xPosV2, yPosV1, yPosV2);
 	                    // std::cout << "id : " << id.c_str() << " id pree : " << receivedMessage->getVehicleId() << " distance : " << distance << "\n";
 
-	                    if ((distance > 21) && (xPosV2 > xPosV1))
+	                    if ((distance > inPlatoonDistance) && (xPosV2 > xPosV1))
 	                    {
-	                        // std::cout << "> 20\n"; 
-	                        mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
+	                        // std::cout << "> inPlatoonDistance\n"; 
+	                        mVehicleController->setSpeed(((distance/inPlatoonDistance) * leader_speed)* meter_per_second);
 	                    }
-	                    else if (((distance < 21) && (distance > 19)) && (xPosV2 > xPosV1)) {
+	                    else if (((distance < (inPlatoonDistance)) && (distance > (inPlatoonDistance - 1))) && (xPosV2 > xPosV1)) {
 
-	                        // std::cout << "< 15.5 \n";
-	                        mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
-	                        vehicle_api.changeLane(id, receivedMessage->getLaneIndex(), 2);
+	                     
+	                        mVehicleController->setSpeed(((distance/inPlatoonDistance) * leader_speed)* meter_per_second);
+	                        vehicle_api.changeLane(id, receivedMessage->getLaneIndex(), 10);
 	                    }
 
-	                    else if ((distance < 15) || (xPosV2 < xPosV1))
+	                    else if ((distance < (inPlatoonDistance - 1)) || (xPosV2 < xPosV1))
 	                    {
 	                        // std::cout << "< 10\n";
-	                        mVehicleController->setSpeed((0.5 * leader_speed) * meter_per_second);
-	                        vehicle_api.changeLane(id, pow(receivedMessage->getLaneIndex() - 1, 2), 2);
+	                        mVehicleController->setSpeed(((distance/inPlatoonDistance) * leader_speed) * meter_per_second);
+	                        if (xPosV2 < xPosV1)
+								vehicle_api.changeLane(id, pow(receivedMessage->getLaneIndex() - 1, 2), 2);
 	                        
 	                    }                    
 	                }
@@ -421,13 +413,12 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	        
 	        if (receivedMessage->getIdInPlatoon() == 0)
 	        {  
-	            
 	            platoonSize = receivedMessage->getPlatoonSize();
 	            double vehicle_speed =  mVehicleController->getSpeed() / meter_per_second;
 	            leader_speed = receivedMessage->getSpeed();
 	            
-	            if (is_in_platoon)
-	                CACCSpeedControl(id, leader_speed, vehicle_speed);
+	            //if (is_in_platoon)
+	                //CACCSpeedControl(id, leader_speed, vehicle_speed);
 	        }
 
 	        if (receivedMessage->getIdInPlatoon() == (platoonId - 1))
@@ -449,28 +440,25 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 					xPosV1 = xPosV1 * -1;
 				}
 
-	            if ((distance > 21) && (xPosV2 > xPosV1))
+	            if ((distance > inPlatoonDistance) && (xPosV2 > xPosV1))
 	            {
-	                //std::cout << "> 20\n";
-	                
-	                mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
+	                mVehicleController->setSpeed(((distance/inPlatoonDistance) * leader_speed) * meter_per_second);
 	            }
-	            else if ((distance < 21) && (distance > 19) && (xPosV2 > xPosV1)) {
-
-	                //std::cout << "< 15.5 \n";
-	                mVehicleController->setSpeed(( (distance/20) * leader_speed)* meter_per_second);
-	                vehicle_api.changeLane(id, receivedMessage->getLaneIndex(), 2);
+	            else if ((distance < inPlatoonDistance) && (distance > (inPlatoonDistance - 1)) && (xPosV2 > xPosV1)) 
+				{
+	                mVehicleController->setSpeed(((distance/inPlatoonDistance) * leader_speed)* meter_per_second);
+	                vehicle_api.changeLane(id, receivedMessage->getLaneIndex(), 10);
 	            }
 
-	            else if ((distance < 15) || (xPosV2 < xPosV1))
+	            else if ((distance < (inPlatoonDistance - 1)) || (xPosV2 < xPosV1))
 	            {
 	                //std::cout << "< 10\n";
-	                mVehicleController->setSpeed((0.5 * leader_speed) * meter_per_second);
-	                vehicle_api.changeLane(id, pow(receivedMessage->getLaneIndex() - 1, 2), 2);
+	                mVehicleController->setSpeed(((distance/inPlatoonDistance) * leader_speed) * meter_per_second);
 	                
 	            }    
 
 	            //CACCGapControl(id, receivedMessage->getVehicleId(), vehicle_speed, receivedMessage->getSpeed(), distance, vehicle_accel);
+
 	        }
 	    }
 
@@ -494,11 +482,12 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 	        {
 	            //mVehicleController->setSpeed(0.5 * receivedMessage->getSpeed() * meter_per_second);
 	            
-	            vehicle_api.changeLane(id, pow(receivedMessage->getLaneIndex() - 1, 2), 2);
+	            vehicle_api.changeLane(id, pow(receivedMessage->getLaneIndex() - 1, 2), 1);
 	        }
 	        //mVehicleController->setSpeed(10 * meter_per_second);
 	    }
 	    
+
 	    delete receivedMessage;      
     }
 }

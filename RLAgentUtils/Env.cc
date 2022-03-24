@@ -120,11 +120,12 @@ double Environment::reward(int platonId){
     if(snr_its_g5_ < snr_its_g5)
         reward_part_2 -= (snr_its_g5 - snr_its_g5_);
     if(snr_lte_ < snr_lte)
-        reward_part_2 -= (snr_lte - snr_lte_)
+        reward_part_2 -= (snr_lte - snr_lte_);
 
     // Summarized reward
-    double reward = (0.8 * reward_part_0) + (0.2 * (beta * reward_part_1 + alpha * reward_part_2));
-    std::cout << "reward in step: " << reward_part_0 << " " << reward_part_1 << " " << reward_part_2 << "\n";
+    //double reward = (0.8 * reward_part_0) + (0.2 * (beta * reward_part_1 + alpha * reward_part_2));
+    double reward = alpha * reward_part_0 + beta * reward_part_1;
+    //std::cout << "reward in step: " << reward_part_0 << " " << reward_part_1 << " " << reward_part_2 << "\n";
     
     // Return the reward
     return reward;
