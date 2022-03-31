@@ -86,7 +86,7 @@ class HybridService : public artery::ItsG5Service
     private: std::string checkpoint;
     private: double epsilon = 1;
     private: double epsilon_min = 0.01;
-    private: double epsilon_decay = 2e-5;
+    private: double epsilon_decay = 1e-5;
     // private: float lr = 0.01;
     private: float gamma = 0.99;
     private: torch::optim::Adam optimizer;

@@ -26,6 +26,8 @@ void Environment::init(){
 
 std::tuple<double, bool> Environment::step(int platonId){
 
+    number_steps++;
+
     double reward = this->reward(platonId);
 
     // Check if the message was received by all platoon vehicles
@@ -33,9 +35,10 @@ std::tuple<double, bool> Environment::step(int platonId){
     //std::cout << "Check if the message was received by all platoon vehicles ";
     
     for (int j=0; j<6; j++){
-        if((received_status[platonId][j] == 0) && (j != platonId)){
+        if(((received_status[platonId][j] == 0) && (j != platonId)) || (received_status[platonId][j] == 2)){
             is_received_by_all = false;
         }
+
         //std::cout << received_status[platonId][j] << " ";   
     }
 
@@ -49,11 +52,6 @@ std::tuple<double, bool> Environment::step(int platonId){
     if(received_status[platonId][6] == 100){
         done = true;
         received_status[platonId][6] = 0;
-    }
-    else{
-        number_steps++;
-        //std::cout << "PlatoonId " << platonId << " number of received " << received_status[platonId][6] << " number of steps: " << number_steps << "\n";
-
     }
 
     return std::tuple<double, bool>(reward, done);
@@ -87,9 +85,9 @@ double Environment::reward(int platonId){
 
     for(int i=0; i<6; i++){
         if(received_status[platonId][i] == 2){
-            reward_part_0 -= 0.5;  
+            reward_part_0 = reward_part_0 - 1;  
         }else if((received_status[platonId][i] == 0) && (i != platonId)){
-            reward_part_0 -= 1;
+            reward_part_0 = reward_part_0 - 2;
         }
     }
 
@@ -123,11 +121,13 @@ double Environment::reward(int platonId){
         reward_part_2 -= (snr_lte - snr_lte_);
 
     // Summarized reward
+
     //double reward = (0.8 * reward_part_0) + (0.2 * (beta * reward_part_1 + alpha * reward_part_2));
-    double reward = alpha * reward_part_0 + beta * reward_part_1;
+    double reward = reward_part_0; //alpha * reward_part_0 + beta * reward_part_1;
     //std::cout << "reward in step: " << reward_part_0 << " " << reward_part_1 << " " << reward_part_2 << "\n";
     
     // Return the reward
+    
     return reward;
 }
 

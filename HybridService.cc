@@ -38,7 +38,7 @@ void HybridService::init(int input_dims, int num_actions, int hidden_dims){
         action_space = num_actions;
 }
 
-HybridService::HybridService():optimizer(network->parameters(), torch::optim::AdamOptions(0.0001)){
+HybridService::HybridService():optimizer(network->parameters(), torch::optim::AdamOptions(0.0005)){
 
 	this->init(environment.observation_space, environment.action_space, 128);
 }
@@ -130,8 +130,7 @@ void HybridService::initialize()
 		std::string net_model_name = environment.pt_net + vehicle_id;
 		std::string target_model_name = environment.pt_target + vehicle_id;
 
-		torch::load(target_network, target_model_name);
-		torch::load(network, net_model_name);
+		
 	}
     
 }
@@ -203,12 +202,14 @@ void HybridService::finish()
 {
 	ItsG5Service::finish();
 	if (role != FREE){
-		
+		mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();
+    	const std::string vehicle_id = mVehicleController->getVehicleId();
+
+		std::cout << "V " << vehicle_id << "\n"; 
 		std::cout << "Hits " << std::to_string(message_hits).c_str() << "\n"; 
 		std::cout << "LIst Size " << std::to_string(receivedMessages.size()).c_str() << "\n";
 
-		mVehicleController = &getFacilities().get_mutable<traci::VehicleController>();
-    	const std::string vehicle_id = mVehicleController->getVehicleId();
+		
 
 		std::string net_model_name = environment.pt_net + vehicle_id;
 		std::string target_model_name = environment.pt_target + vehicle_id;
@@ -501,20 +502,20 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 	// Update state of the environment and launch the learning process
 	
 	if(messageId != 0){
-
-		environment.new_state = torch::tensor({1.0, managmentLayer->SINR_ITS_G5_first, managmentLayer->PRR_LTE_first, managmentLayer->SINR_LTE_first, 0.99, 50.0});
-
-		std::tuple<double, bool> step_result = environment.step(platoonId);
 		
+		environment.new_state = torch::tensor({1.0, managmentLayer->SINR_ITS_G5_first, managmentLayer->PRR_LTE_first, managmentLayer->SINR_LTE_first, 0.99, 50.0});
+		
+		std::tuple<double, bool> step_result = environment.step(platoonId);
+
 		avg_reward += std::get<0>(step_result);
 
 		if(std::get<1>(step_result)){
 			file.open(csvFileR, std::ios::app);
 			if (file) {
-				file << avg_reward/environment.number_steps << ", " << environment.number_steps << "\n";
+				file << avg_reward / environment.number_steps << ", " << environment.number_steps << "\n";
 			}
 			file.close();
-			std::cout << "REWARD: " << avg_reward/environment.number_steps << " STEPS: " << environment.number_steps << "   ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **\n";
+			std::cout << "REWARD: " << avg_reward / environment.number_steps << " STEPS: " << environment.number_steps << "   ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **\n";
 			avg_reward = 0;
 			environment.init();
 		}
