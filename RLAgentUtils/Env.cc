@@ -22,6 +22,7 @@ Environment::Environment(){
 void Environment::init(){
     done = false; 
     number_steps = 0;
+    number_hits = 0;
 }
 
 std::tuple<double, bool> Environment::step(int platonId){
@@ -85,7 +86,8 @@ double Environment::reward(int platonId){
 
     for(int i=0; i<6; i++){
         if(received_status[platonId][i] == 2){
-            reward_part_0 = reward_part_0 - 1;  
+            reward_part_0 = reward_part_0 - 1; 
+            number_hits++; 
         }else if((received_status[platonId][i] == 0) && (i != platonId)){
             reward_part_0 = reward_part_0 - 2;
         }
@@ -127,7 +129,7 @@ double Environment::reward(int platonId){
     //std::cout << "reward in step: " << reward_part_0 << " " << reward_part_1 << " " << reward_part_2 << "\n";
     
     // Return the reward
-    
+
     return reward;
 }
 

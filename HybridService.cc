@@ -16,6 +16,7 @@
 #include <string>
 #include <algorithm>
 #include <tuple>
+#include <arpa/inet.h>
 #include "torch/torch.h"
 #include "artery/inet/VanetRadio.h"
 // #include "stack/phy/ChannelModel/LteRealisticChannelModel.h"
@@ -27,6 +28,11 @@ using namespace vanetza;
 
 
 Define_Module(HybridService)
+
+int PORT = 8080;
+
+int sock = 0, buffer_line, H_server;
+struct sockaddr_in serv_addr;
 
 static const simsignal_t fromMainAppSignal = cComponent::registerSignal("toHybridServiceSignal");
 
@@ -67,6 +73,26 @@ void HybridService::initialize()
 		leader.vehicleId = vehicle_id;
 		leader.idInPlatoon = 0;
 		platoonMembers = {leader};
+		if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+			{
+				std::cout <<"\n Socket creation error" << endl;
+			}
+
+			serv_addr.sin_family = AF_INET;
+			serv_addr.sin_port = htons(PORT);
+
+			// Convert IPv4 and IPv6 addresses from text to binary form
+			if(inet_pton(AF_INET, "127.0.1.1", &serv_addr.sin_addr)<=0) 
+			{
+				std::cout << "Invalid address/ Address not supported " << endl;
+			}
+			
+			// printf("\nConnection to server !!!! \n");
+
+			if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+			{
+				std::cout <<"Connection Failed " << endl;;
+			}
 
     }
     else if (vehicle_id.compare(0, 16, "platoon_follower") == 0){
@@ -108,7 +134,7 @@ void HybridService::initialize()
 		fileG5.close();
 
 		if (fileR) {
-			fileR << "Reward" << "\n";
+			fileR << "Reward" << ", " << "N of messages" << ", " << "Hits" << "\n";
 		}
 		fileR.close();
 	}
@@ -123,13 +149,17 @@ void HybridService::initialize()
 	
 	if((role == JOINER) || (role == LEADER)){
 
+		// Socket init
+		
+			
+
+		// Loading nn parameters
+		
 		network->network_id = vehicle_id + "_Net";
 		target_network->network_id = vehicle_id + "_target_Net" ;
 
-		// Loading nn parameters
 		std::string net_model_name = environment.pt_net + vehicle_id;
 		std::string target_model_name = environment.pt_target + vehicle_id;
-
 		
 	}
     
@@ -479,10 +509,8 @@ void HybridService::receiveSignal(cComponent* source, simsignal_t signal, cObjec
 				xPosV1 = xPosV1 * -1;
 			}
 	        
-	        if ((xPosV2 < xPosV1) && (distance < 15) && (strcmp(vehicle_api.getRoadID(id).c_str(), receivedMessage->getEdgeName()) == 0))
-	        {
-	            //mVehicleController->setSpeed(0.5 * receivedMessage->getSpeed() * meter_per_second);
-	            
+	        if ((xPosV2 < xPosV1) && (distance < 30) && (strcmp(vehicle_api.getRoadID(id).c_str(), receivedMessage->getEdgeName()) == 0))
+	        {	            
 	            vehicle_api.changeLane(id, pow(receivedMessage->getLaneIndex() - 1, 2), 1);
 	        }
 	        //mVehicleController->setSpeed(10 * meter_per_second);
@@ -499,20 +527,29 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 	auto msg_ = check_and_cast<PlatooningMessage*>(msg);
 	std::fstream file;
 
+	// To build the message to the socket
+	double reward_from_env = 1;
+	bool done_from_env = 0;
+
 	// Update state of the environment and launch the learning process
 	
-	if(messageId != 0){
+	if(messageId > 0){
 		
 		environment.new_state = torch::tensor({1.0, managmentLayer->SINR_ITS_G5_first, managmentLayer->PRR_LTE_first, managmentLayer->SINR_LTE_first, 0.99, 50.0});
-		
+
 		std::tuple<double, bool> step_result = environment.step(platoonId);
 
-		avg_reward += std::get<0>(step_result);
+		reward_from_env = std::get<0>(step_result);
+		done_from_env = std::get<1>(step_result);
 
-		if(std::get<1>(step_result)){
+		avg_reward += reward_from_env;
+		
+		// Write into the file for stats
+
+		if(done_from_env){
 			file.open(csvFileR, std::ios::app);
 			if (file) {
-				file << avg_reward / environment.number_steps << ", " << environment.number_steps << "\n";
+				file << avg_reward / environment.number_steps << ", " << environment.number_steps << ", " << environment.number_hits << "\n";
 			}
 			file.close();
 			std::cout << "REWARD: " << avg_reward / environment.number_steps << " STEPS: " << environment.number_steps << "   ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **\n";
@@ -520,8 +557,9 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 			environment.init();
 		}
 		
-		store_transition(environment.state, environment.new_state, environment.choosen_action, std::get<0>(step_result), std::get<1>(step_result));
-		learn();
+		// C++
+		//store_transition(environment.state, environment.new_state, environment.choosen_action, std::get<0>(step_result), std::get<1>(step_result));
+		//learn();
 
 		file.open(csvFileSNIRG5, std::ios::app);
 		if (file) {
@@ -536,17 +574,31 @@ void HybridService::sendToMainApp(cMessage* msg, std::string id)
 		file.close();
 	}
 
-	// Proceding state ancd doing the action
+	
+	// Proceding state and doing the action
 
 	// Getting stat parameters
 	torch::Tensor observation = torch::tensor({1.0, managmentLayer->SINR_ITS_G5, managmentLayer->PRR_LTE, managmentLayer->SINR_LTE, 0.99, 50.0});
 	environment.state = observation;
-	int action = choose_action(observation);
+
+	// send to ddqn agent and receive action
+	std::string evaluationToSendToDDQN = "#" + std::to_string(reward_from_env) + "$" + std::to_string(done_from_env) + "$" + std::to_string(managmentLayer->SINR_ITS_G5_first) \
+		+ "$" + std::to_string(managmentLayer->PRR_LTE_first) + "$" + std::to_string(managmentLayer->SINR_LTE_first);
+		
+	std::string stateToSendToDDQN = std::to_string(managmentLayer->SINR_ITS_G5) + "$" + std::to_string(managmentLayer->PRR_LTE) + \
+		"$" + std::to_string(managmentLayer->SINR_LTE) + evaluationToSendToDDQN ;
+
+	sendto(sock, stateToSendToDDQN.c_str(), strlen(stateToSendToDDQN.c_str()), 0, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+	char reception_buffer[4096] = {0};
+
+	buffer_line = read(sock , reception_buffer, 1024);
+	int action = std::atoi(reception_buffer);
+
+	//int action = choose_action(observation); C++
 	environment.choosen_action = action;
 	msg_->setSending_interface(action);
 
 	environment.clear_reception_state(platoonId);
-
 
     file.open (csvFile, std::ios::app);
 

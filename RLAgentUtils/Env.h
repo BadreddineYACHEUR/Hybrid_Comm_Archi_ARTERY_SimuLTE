@@ -13,6 +13,7 @@ class Environment
         int observation_space = 6;
         int action_space = 3;
         int number_steps = 0;
+        int number_hits = 0;
         int choosen_action;
         bool done = false;
     
