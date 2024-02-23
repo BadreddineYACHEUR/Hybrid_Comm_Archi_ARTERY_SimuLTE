@@ -150,3 +150,6 @@ dmypy.json
 .cmdenv-log
 .qtenvrc
 sumo-*.log
+*.cmake
+*.ts
+*.marks
