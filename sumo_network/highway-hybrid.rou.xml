@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on lun. 29 mars 2021 17:40:04 by Eclipse SUMO netedit Version 1.8.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network/highway-hybrid.net.xml"/>
+    </input>
+
+    <output>
+        <output-file value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network/highway-hybrid.net.xml"/>
+    </output>
+
+    <processing>
+        <geometry.min-radius.fix.railways value="false"/>
+        <geometry.max-grade.fix value="false"/>
+        <offset.disable-normalization value="true"/>
+        <lefthand value="false"/>
+    </processing>
+
+    <junctions>
+        <no-internal-links value="true"/>
+        <no-turnarounds value="true"/>
+        <junctions.corner-detail value="5"/>
+        <junctions.limit-turn-speed value="5.5"/>
+        <rectangular-lane-cut value="false"/>
+    </junctions>
+
+    <pedestrian>
+        <walkingareas value="false"/>
+    </pedestrian>
+
+    <netedit>
+        <route-files value="/home/byacheur/Apps/artery/scenarios/hybrid_comm/sumo_network/highway-hybrid.rou.xml"/>
+    </netedit>
+
+    <report>
+        <aggregate-warnings value="5"/>
+    </report>
+
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+
+    
+
+    <vType id="platoonLeader" length="2" maxSpeed="20" minGap="0.5" speedFactor="1"/> 
+
+    <vType id="platoonFollower" length="2" maxSpeed="40" carFollowModel="CACC" minGap="0.5" speedFactor="1.5"/> 
+
+    <vType id="free" length="2" maxSpeed="30" minGap="0.5" speedFactor="0.5" lcKeepRight="10"/>
+
+    <flow id="free_flow_0" type="free" begin="0.00" period="0.85" departSpeed="9.77">
+        <route edges="edge1" color="cyan"/>
+    </flow>
+
+    <flow id="free_flow_1" type="free" begin="0.00" color="blue" period="0.85" departSpeed="9.77">
+        <route edges="-edge1" color="cyan"/>
+    </flow>
+
+
+    <vehicle id="platoon_leader" depart="20.00" departSpeed="10" color="yellow" type="platoonLeader">
+        <route edges="-edge1" color="cyan"/>
+    </vehicle>
+
+    <flow id="platoon_follower" begin="25.00" departSpeed="10" type="platoonFollower" color="red" number="5" vehsPerHour="1000" departLane="1">
+        <route edges="-edge1" color="cyan"/>
+    </flow>
+
+</routes>
