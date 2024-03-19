@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <services>
-    <service type="seeThroughService.HybridService">
+    <service type="seeThroughService.HybridService"> <!-- you can choose the platooning service too -->
         <listener port="8001" />
     </service>
     <service type="artery.application.CaService">

@@ -10,4 +10,4 @@ To reproduce this architecture on your OMNeT++ environement you should install:
 - SUMO
 - Artery
 - SimuLTE
-- Python or link the C++ library as shoowen in the "CMAkeLists.txt" file
+- Python or link the C++ library as showen in the "CMAkeLists.txt" file

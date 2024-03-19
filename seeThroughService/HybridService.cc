@@ -19,7 +19,6 @@
 #include <arpa/inet.h>
 #include "torch/torch.h"
 #include "artery/inet/VanetRadio.h"
-// #include "stack/phy/ChannelModel/LteRealisticChannelModel.h"
 #include "/home/byacheur/Apps/artery/src/artery/lte/Managment/Managment.h"
 
 
