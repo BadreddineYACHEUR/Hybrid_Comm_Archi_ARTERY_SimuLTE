@@ -96,13 +96,4 @@ void Agent::learn(){
 
 }
 
-/*    
-    def save_models(self):
-        self.q_eval.save_checkpoint()
-        self.q_next.save_checkpoint()
-
-    def load_models(self):
-        self.q_eval.load_checkpoint()
-        self.q_next.load_checkpoint()*/
-
  

@@ -42,10 +42,6 @@ class Agent{
         void replace_target_network();
         void decrement_epsilon();
 
-        // torch::Tensor get_tensor_observation(std::vector<unsigned char> state);
-
-        // void loadstatedict(torch::nn::Module& model, torch::nn::Module& target_model);
-
         void learn();
 
 };
