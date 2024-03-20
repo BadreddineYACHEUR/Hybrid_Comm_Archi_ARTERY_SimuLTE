@@ -128,9 +128,7 @@ double Environment::reward(int sender_id){
 
     // Summarized reward
 
-    //double reward = (0.8 * reward_part_0) + (0.2 * (beta * reward_part_1 + alpha * reward_part_2));
     double reward = reward_part_0; //alpha * reward_part_0 + beta * reward_part_1;
-    //std::cout << "reward in step: " << reward_part_0 << " " << reward_part_1 << " " << reward_part_2 << "\n";
     
     // Return the reward
 
